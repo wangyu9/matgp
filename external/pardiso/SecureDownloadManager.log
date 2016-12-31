@@ -1,0 +1,21 @@
+[Download] [Trace] OnEventMessage FileKey 0 2014/12/5 6:7:42:950 Event_ActionButton
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:7:42:955 Download Start Phase - InternetSetOption(NULL, INTERNET_OPTION_MAX_CONNS_PER_1_0_SERVER, 100, sizeof(dwMaxCount)) retCode = 1
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:7:42:955 InternetSetOption(NULL, INTERNET_OPTION_MAX_CONNS_PER_SERVER, 100, sizeof(dwMaxCount))retCode = 1
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:7:42:955 InternetOpen(AfxGetAppName(), INTERNET_OPEN_TYPE_PRECONFIG, NULL, NULL, INTERNET_FLAG_DONT_CACHE | INTERNET_FLAG_RELOAD)retCode = 1
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:7:42:956 InternetSetOption(hInternetSession, INTERNET_OPTION_MAX_CONNS_PER_1_0_SERVER, 100, sizeof(dwMaxCount));retCode = 0
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:7:43:952 InternetConnect(hInternetSession, 'software.dreamspark.com', 80, NULL, NULL, INTERNET_SERVICE_HTTP, 0, (DWORD) this);
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:7:43:952 HttpOpenRequest(hHttpConnection, NULL, /dreamspark/ENGLISH/en_visual_studio_ultimate_2012_x86_dvd_2262106.sdc, 'HTTP/1.1', NULL, NULL, 2218787072, 0)
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:7:44:309 HttpSendRequest(hHttpFile, '', 0, NULL, 0)
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:7:44:310 HttpQueryInfo(hHttpFile, HTTP_QUERY_STATUS_CODE, szStatusCode, &dwInfoSize, NULL) return statusCode 200
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:7:44:310 HttpQueryInfo(hHttpFile, HTTP_QUERY_CONTENT_LENGTH, szContentLength, &dwInfoSize, NULL) return m_ulContentLength 1527447420
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:7:44:320 InternetCloseHandle( hHttpFile )
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:7:44:320 HttpOpenRequest(hHttpConnection, NULL, /dreamspark/ENGLISH/en_visual_studio_ultimate_2012_x86_dvd_2262106.sdc, NULL, NULL, NULL, 2218787072, 0)
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:7:44:471 HttpSendRequest(hHttpFile, '', 0, NULL, 0)
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:7:44:471 processDownloadStream
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:7:44:472 InternetSetOption(hHttpFile, INTERNET_OPTION_CONTROL_RECEIVE_TIMEOUT,10000, sizeof(dwTimeout))retCode = 1
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:7:44:472 First InternetReadFile call
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:11:5:835 InternetReadFile loop completed
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:11:5:837 OnTaskMessage::DownloadTaskState_Completed call closeOutputFile
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:11:5:839 Unpacking File: C:\Users\Yu Wang\Downloads\en_visual_studio_ultimate_2012_x86_dvd_2262106.sdc
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:11:25:810 CRC Check completed reading 1527414648 bytes
+[Download] [Trace] OnDebugMessage FileKey 1 2014/12/5 6:11:25:810 CRC Compare 1320735588 and 1320735588

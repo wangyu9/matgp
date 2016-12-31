@@ -1,0 +1,33 @@
+function [exjet] = my_colormap(map_type)
+
+% remember to have: caxis([-0.2,1]);
+
+if(strcmp(map_type,'weights-neg'))
+    lambda1 = (1:140)'./140;
+    lambda2 = 1 - lambda1;
+    red = [1,0,0];
+    green = [0,1,0];
+    blue = [0,0,1];
+    magenta = [1,0,1];
+
+    map =  [...
+        lambda1*blue+lambda2*magenta;... 
+        lambda1*green+lambda2*blue;...
+        lambda1*red+lambda2*green;...
+        ];
+    deepred_to_blue = jet(800);
+    deepred_to_blue = deepred_to_blue(101:800,:);
+    exjet = [...
+        lambda1*blue+lambda2*magenta;... 
+        deepred_to_blue;];
+else
+    exjet = [];
+    error('Unknown colormap type');    
+end
+
+
+
+    
+
+    
+
