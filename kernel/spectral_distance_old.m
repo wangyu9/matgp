@@ -1,4 +1,4 @@
-function [D] = spectral_distance(EV,ED,b,varargin)
+function [D] = spectral_distance(V,F,b,varargin)
 %%
 % Biharmonic Distance: http://www.cs.princeton.edu/~funk/biharmonic.pdf
 % Commute Time Distance
@@ -10,9 +10,7 @@ function [D] = spectral_distance(EV,ED,b,varargin)
 k = 20; % number of eigenvalues used.
 type = 'diffusion'; % 'diffusion', 'harmonic'=='commute', 'biharmonic'
 diff_time_coeff = 1; % only used for diffusion distance
-skip_first = false;
-h = 1; % diffusion distance only. %mean(mean(edge_lengths(V,F))); % average edge length, warning that the internal edges are counted twice.
-%weighted_laplacian = true;
+weighted_laplacian = true;
 
 %% Variables Parser
 
@@ -23,20 +21,14 @@ while(ii<=nvar)
         case 'k'
             k = varargin{ii+1};
             ii = ii + 1;
-        case 'h'
-            h = varargin{ii+1};
-            ii = ii + 1;    
         case 'diff_time_coeff'
             diff_time_coeff = varargin{ii+1};
             ii = ii + 1;
-%         case 'weighted_laplacian'
-%             weighted_laplacian = varargin{ii+1};
-%             ii = ii + 1;
+        case 'weighted_laplacian'
+            weighted_laplacian = varargin{ii+1};
+            ii = ii + 1;
         case 'type'
             type = varargin{ii+1};
-            ii = ii + 1;
-        case 'skip_first'
-            skip_first = varargin{ii+1};
             ii = ii + 1;
     end
     ii = ii + 1;
@@ -44,17 +36,9 @@ end
 
 
 %%
-n = size(EV,1);
-% [EV,ED] = laplacian_spectrum(V,F,k,'weighted_eigen',weighted_laplacian,'skip_zero_eigen',true);
-% ED = - ED;
+n = size(V,1);
+[EV,ED] = laplacian_spectrum(V,F,k,'weighted_eigen',weighted_laplacian,'skip_zero_eigen',true);
 
-if skip_first
-    ED = ED(2:end,2:end);
-    EV = EV(:,2:end);
-end
-
-ED = ED(1:k,1:k);
-EV = EV(:,1:k);
 %% 
 % the only difference among the three distances is that they have different
 % functions f(lambda), where lambda is a eigenvalue of the
@@ -62,7 +46,7 @@ EV = EV(:,1:k);
 switch(type)
     case 'diffusion'
         % require a diffusion time parameter. 
-        %h = 1; %mean(mean(edge_lengths(V,F))); % average edge length, warning that the internal edges are counted twice.
+        h = mean(mean(edge_lengths(V,F))); % average edge length, warning that the internal edges are counted twice.
         t = diff_time_coeff * h^2;
         f = @(x) exp(-2*t*x); % important: x is eigenvalue that should be positive!
     case 'harmonic'
@@ -79,11 +63,11 @@ end
 D = zeros(n,length(b));
 
 for ii=1:k
-    % important, ED(ii,ii) is the eigenvalue of positive Laplacian
-    % L, thus ED(ii,ii) is positive and corresponds to what is define as
+    % important, ED(ii,ii) is the eigenvalue of negative positive Laplacian
+    % L, thus -ED(ii,ii) is positive and corresponds to what is define as
     % lambda in Yaron's Biharmonic distance paper.
     
-    D = D + f( ED(ii,ii) ) * bsxfun(@minus,EV(:,ii),EV(b,ii)') .^ 2;   
+    D = D + f( -ED(ii,ii) ) * bsxfun(@minus,EV(:,ii),EV(b,ii)') .^ 2;   
 end
 % do not forget this!
 D = sqrt(D); 

@@ -4,9 +4,12 @@ function [t,l,h] = render_mesh(V,F,varargin)
 azel = [0 0];
 C = [150,220,150]./255.*1.1;
 w = [];
-
+c_range = [];
 nvar = length(varargin);
+cmap = 'weights-neg';
+
 ii=1;
+
 while(ii<=nvar)
    if(strcmp(varargin{ii},'view'))
        azel = varargin{ii+1};
@@ -17,6 +20,12 @@ while(ii<=nvar)
    elseif(strcmp(varargin{ii},'ScaleColor'))
        w = varargin{ii+1};
        ii = ii + 1;
+   elseif(strcmp(varargin{ii},'ColorMap'))
+       cmap = varargin{ii+1};
+       ii = ii + 1;    
+   elseif(strcmp(varargin{ii},'ColorAxis'))
+       c_range = varargin{ii+1};
+       ii = ii + 1;       
    end
    ii = ii + 1;
 end
@@ -30,9 +39,12 @@ if(length(w)==0)
 else
     t = tsurf(F,V,'EdgeColor','none','FaceColor','interp','FaceLighting','phong');
     
-    colormap(my_colormap('weights-neg'));
-    caxis([-0.2,1]);
-    colorbar
+    colormap(my_colormap(cmap));
+    %caxis([-0.2,1]);
+    if(~isempty(c_range))
+       caxis([c_range(1),c_range(2)]); 
+    end
+    %colorbar
     set(t,'CData',w);
     drawnow;
 end
@@ -44,7 +56,8 @@ grid off;
 axis off;
 camzoom(1);
 
-whitebg([1,1,1]);
+set(gcf,'color','w');
+%whitebg([1,1,1]);
 
 
 lightPos = [mean(V(:,1:2)), mean(V(:,3)) + mean((max(V(:,1:2))-min(V(:,1:2))))];

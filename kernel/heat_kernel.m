@@ -15,7 +15,7 @@ function [HK] = heat_kernel(EV,ED,t,b,varargin)
 % Question, do columns of EV have to be normalized?
 
 %%
-zero_eigen_skipped = false;
+skip_first = false;
 
 %% Variables Parser
 
@@ -23,8 +23,8 @@ nvar = numel(varargin);
 ii = 1;
 while(ii<=nvar)
     switch(varargin{ii})
-        case 'zero_eigen_skipped'
-            zero_eigen_skipped = varargin{ii+1};
+        case 'skip_first'
+            skip_first = varargin{ii+1};
             ii = ii + 1;
     end
     ii = ii + 1;
@@ -35,11 +35,13 @@ end
 n = size(EV,1);
 k = size(EV,2);
 
+assert(min(min(ED))>=0);
 assert(k==size(ED,1));
 assert(k==size(ED,2));
 
 %
-if(zero_eigen_skipped)
+if(skip_first)
+    error('Not implemented yet!');
     HK = eye(n);
     HK = HK(:,b);
 else
@@ -51,5 +53,5 @@ for ii=1:k
     % laplacian operator used to get the eigenvaludes. If Laplacian is 
     % negative semi-definite (i.e. eigenvaludes are negative), then there
     % should be no '-'.
-    HK = HK + exp( ED(ii,ii)*t ) * EV(:,ii) * EV(b,ii)'; 
+    HK = HK + exp( - abs(ED(ii,ii))*t ) * EV(:,ii) * EV(b,ii)'; 
 end

@@ -20,9 +20,15 @@ if(strcmp(map_type,'weights-neg'))
     exjet = [...
         lambda1*blue+lambda2*magenta;... 
         deepred_to_blue;];
+elseif(strcmp(map_type,'RdYlBu'))
+    exjet = RdYlBu(800); 
+    exjet = exjet(end:-1:1,:);
+elseif strcmp(map_type,'heat')
+	c = colormap('hot');
+	exjet = c(end:-1:1,:);    
 else
-    exjet = [];
-    error('Unknown colormap type');    
+    exjet = map_type;%[];      
+    %error('Unknown colormap type');    
 end
 
 

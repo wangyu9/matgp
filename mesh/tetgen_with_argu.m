@@ -75,7 +75,7 @@ function [V,T,F] = tetgen_with_argu(SV,SF,IV,argu)
 
   % Not sure why this isn't coming out 1-indexed
   F = readFACE(face_filename);
-  F = F+1;
+  % F = F+1; % wangyu I do not have the problem
   % reverse faces because tetgen uses backwards order
   F = fliplr(F);
   % I guess this is 1-indexed because we're using a .off file rather than a
@@ -97,5 +97,6 @@ function [V,T,F] = tetgen_with_argu(SV,SF,IV,argu)
   delete(ele_filename);
   delete(face_filename);
   delete(node_filename);
+  
 
 end
