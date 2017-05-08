@@ -25,14 +25,18 @@ function [HKS] = heat_kernel_signature(VV,DD,Ts,varargin)
     % end of parsing
     
     
-%     nt = length(Ts);
-%     HKS = zeros(n,nt);
-% this is wrong somewhere    
-%     for i=1:nt
-%        t = Ts(i);
-%        HKS(:,i) = sum( VV(b,2:k).^2*exp(-t*DD(2:k,2:k)), 2);  
-%     end
+    nt = length(Ts);
+    HKS = zeros(n,nt);   
+    for i=1:nt
+       t = Ts(i);
+       % HKS(:,i) = sum( VV(b,1:k).^2*exp(-t*abs(DD(1:k,1:k))), 2); this is
+       % wrong since e^0 = 1, off-diagonal elements are 1!!!!
+       
+       % this is the right implementation:
+       HKS(:,i) = VV(b,1:k).^2*exp(-t*abs(diag(DD(1:k,1:k))));  
+       
+    end
     
-    HKS = abs(VV(:,1:k) ).^2 * exp(-abs(diag(DD(1:k,1:k)))*Ts);
+    HKS = VV(:,1:k).^2 * exp(-abs(diag(DD(1:k,1:k)))*Ts);
 
     

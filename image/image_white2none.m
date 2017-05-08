@@ -52,6 +52,9 @@ if recenter
     min_j = ceil(stats.BoundingBox(2));
     max_j = min_j + ceil(stats.BoundingBox(4));
 
+    max_i = min(max_i,size(img,2));
+    max_j = min(max_j,size(img,1));
+
     img2 = img(min_j:max_j,min_i:max_i,:);
     alpha2 = alpha(min_j:max_j,min_i:max_i,:);
     % imshow(img2);

@@ -9,11 +9,16 @@ nvar = length(varargin);
 ii=1;
 cmap = 'weights-neg';
 
+LightSource = 'default';
+FaceLighting = 'phong';
 EdgeColor = 'none';
 LightMultiplier = 1;
 while(ii<=nvar)
    if(strcmp(varargin{ii},'view'))
        azel = varargin{ii+1};
+       ii = ii + 1;
+   elseif(strcmp(varargin{ii},'LightSource'))
+       LightSource = varargin{ii+1};
        ii = ii + 1;
    elseif(strcmp(varargin{ii},'FaceColor'))
        C = varargin{ii+1};
@@ -42,12 +47,12 @@ end
 
 
 if(length(w)==0)
-    t = tsurf(F,V,'EdgeColor',EdgeColor,'FaceColor',C,'FaceLighting','phong','SpecularStrength',1.);
+    t = tsurf(F,V,'EdgeColor',EdgeColor,'FaceColor',C,'FaceLighting',FaceLighting,'SpecularStrength',1.);
 else
-    t = tsurf(F,V,'EdgeColor',EdgeColor,'FaceColor','interp','FaceLighting','phong');
-    
+    t = tsurf(F,V,'EdgeColor',EdgeColor,'FaceColor','interp','FaceLighting',FaceLighting);
+    %t = trisurf(F,V(:,1),V(:,2),V(:,3));%,'EdgeColor',EdgeColor,'FaceColor','interp','FaceLighting',FaceLighting);
     %if strcmp(cmap,'weights-neg')
-        colormap(my_colormap(cmap));
+    colormap(my_colormap(cmap));
     %else
     %    colormap(cmap);
     %end
@@ -56,7 +61,9 @@ else
        caxis([c_range(1),c_range(2)]); 
     end
     %colorbar
-    set(t,'CData',w);
+    if(length(w)~=0)
+        set(t,'CData',w);
+    end
     drawnow;
 end
 
@@ -74,20 +81,26 @@ set(gcf,'color','w');
 
 lightPos = [mean(V(:,1:2)), mean(V(:,3)) + mean((max(V(:,1:2))-min(V(:,1:2))))];
 
-s = 0.32*LightMultiplier;
+switch(LightSource)
+    case 'none'
+    case 'default'
 
-  l = [ 
-       light('Position',[+1 +1 +1],'Style','infinite','Color',s*[1,1,1]);
-       light('Position',[+1 +1 -1],'Style','infinite','Color',s*[1,1,1]);
-       light('Position',[+1 -1 +1],'Style','infinite','Color',s*[1,1,1]);
-       light('Position',[+1 -1 -1],'Style','infinite','Color',s*[1,1,1]);
-       light('Position',[-1 +1 +1],'Style','infinite','Color',s*[1,1,1]);
-       light('Position',[-1 +1 -1],'Style','infinite','Color',s*[1,1,1]);
-       light('Position',[-1 -1 +1],'Style','infinite','Color',s*[1,1,1]);
-       light('Position',[-1 -1 -1],'Style','infinite','Color',s*[1,1,1]);
-       %mean(V(:,1:2)), 4*(max(V(:,1:2))-min(V(:,1:2)))
-      %% light('Position',[10 -10  13],'Style','local')
-       ];
+        s = 0.32*LightMultiplier;
+
+        l = [ 
+            light('Position',[+1 +1 +1],'Style','infinite','Color',s*[1,1,1]);
+            light('Position',[+1 +1 -1],'Style','infinite','Color',s*[1,1,1]);
+            light('Position',[+1 -1 +1],'Style','infinite','Color',s*[1,1,1]);
+            light('Position',[+1 -1 -1],'Style','infinite','Color',s*[1,1,1]);
+            light('Position',[-1 +1 +1],'Style','infinite','Color',s*[1,1,1]);
+            light('Position',[-1 +1 -1],'Style','infinite','Color',s*[1,1,1]);
+            light('Position',[-1 -1 +1],'Style','infinite','Color',s*[1,1,1]);
+            light('Position',[-1 -1 -1],'Style','infinite','Color',s*[1,1,1]);
+            %mean(V(:,1:2)), 4*(max(V(:,1:2))-min(V(:,1:2)))
+            %% light('Position',[10 -10  13],'Style','local')
+          ];
+end
+   
     camproj('persp');
     axis equal;
     h = [];

@@ -51,8 +51,9 @@ writeH5MAT(weight_file_path,W);
 writeDMAT(handle_file_path,H);
 
 
-path_to_viewer = '"C:\WorkSpace\Visual Studio 2013\PBS\viewer\msvc\x64\Release\msvc-2015-6-30.exe"';
-    
+%path_to_viewer = '"C:\WorkSpace\Visual Studio 2013\PBS\viewer\msvc\x64\Release\msvc-2015-6-30.exe"';
+path_to_viewer = 'D:\WorkSpace2\PBS\viewer\msvc\x64\Release\pbs.exe';
+
 command = [path_to_viewer ' ' params ' ' command_file_path];
 
 fprintf('%s\n',command);

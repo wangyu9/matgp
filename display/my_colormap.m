@@ -26,8 +26,9 @@ elseif(strcmp(map_type,'RdYlBu'))
 elseif strcmp(map_type,'heat')
 	c = colormap('hot');
 	exjet = c(end:-1:1,:);    
-else
-    exjet = map_type;%[];      
+else 
+    colormap(map_type);
+    exjet = colormap;
     %error('Unknown colormap type');    
 end
 
