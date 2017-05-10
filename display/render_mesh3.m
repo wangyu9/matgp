@@ -12,7 +12,7 @@ cmap = 'weights-neg';
 Shading = 1.0;
 VertexColor = [];
 LightSource = 'default';
-FaceLighting = 'phong';
+FaceLighting = 'gouraud';%'phong';
 EdgeColor = 'none';
 LightMultiplier = 1;
 
@@ -60,32 +60,41 @@ end
 
 %%
 
-t = tsurf(F,V,'EdgeColor',EdgeColor,'FaceColor','interp','FaceLighting',FaceLighting);
+%t = tsurf(F,V,'EdgeColor',EdgeColor,'FaceColor','interp','FaceLighting',FaceLighting);
+t = trisurf(F,V(:,1),V(:,2),V(:,3),'EdgeColor',EdgeColor,'FaceColor','interp','FaceLighting',FaceLighting);
 t.Vertices = V*axisangle2matrix([0 0 1],pi)*axisangle2matrix([1 0 0],pi/2);
 colormap(my_colormap(cmap));
-if(~isempty(c_range))
-   caxis([c_range(1),c_range(2)]); 
-end
+% if(~isempty(c_range))
+%    caxis([c_range(1),c_range(2)]); 
+% end
 
 if(isempty(AO))
 AO = ambient_occlusion(V,F,V,per_vertex_normals(V,F),1000);
 end
 
 if(~isempty(u))
-   % set(t,'CData',w);
-    %VertexColor = value2color(u);
     assert(min(u)>=0);
     assert(max(u)<=1);
-    VertexColor = squeeze(ind2rgb(floor(u*size(colormap,1))+1,colormap));
+    if 0 
+        set(t,'CData',u);
+        t.CDataMapping = 'direct';
+        caxis([0,1])
+    else      
+        %VertexColor = value2color(u);
+        VertexColor = squeeze(ind2rgb(floor(u*size(colormap,1))+1,colormap));
+    end
 end
 
 if(~isempty(VertexColor))
     t.FaceVertexCData = bsxfun(@times,VertexColor,1-Shading*AO);
+    %t.CData = u;%bsxfun(@times,VertexColor,1-Shading*AO);
 end
 
-t.SpecularStrength = 0.2;
-t.DiffuseStrength = 0.1;
-t.AmbientStrength = 0.7;
+t.SpecularStrength = .4;%0.3;
+t.DiffuseStrength = .45;%0.1;
+t.AmbientStrength = .6;%0.7;
+t.SpecularColorReflectance = .3;
+t.SpecularExponent = 7;
 
 switch(LightSource)
     case 'none'

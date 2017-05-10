@@ -1,0 +1,32 @@
+function [] = embree_render_mesh(V,F,C)
+
+
+params = [];
+
+% get a free temporary prefix
+if ~exist('prefix','var')
+  prefix = tempprefix();
+end
+
+mesh_file_path = [prefix '.obj'];
+ecs_file_path = [prefix '.ecs'];
+
+writeOBJ(mesh_file_path,V,F);
+writeDMAT(color_file_path,C);
+
+path_to_viewer = 'C:\WorkSpace\Tools\embree\Embree v2.15.0 x64\bin\pathtracer.exe';
+
+command = [path_to_viewer ' ' params ' ' mesh_file_path ' ' color_file_path];
+
+
+' -c ./box2/cornell_box.ecs --verbose 10'
+
+fprintf('%s\n',command);
+
+[status, result] = system( command );
+
+status
+result
+
+delete(mesh_file_path);
+delete(color_file_path);
