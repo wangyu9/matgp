@@ -1,4 +1,4 @@
-function writeSCENE(mesh_file_path, mtl_file_path, V,F)
+function writeXML(mesh_file_path, mtl_file_path, V,F)
   % WRITEOBJ writes an OBJ file with vertex/face information
   %
   % writeOBJ(filename,V,F,UV,N)
@@ -17,27 +17,27 @@ writeMTL(mtl_file_path);
   
 f = fopen( mesh_file_path, 'w' );
 
-fprintf( f, ['mtllib ', mtl_file_path,'.mtl\n']);
-fprintf( f, 'usemtl lightred\n');
+[~,name,~] = fileparts(mtl_file_path);
+
+fprintf( f, ['mtllib ', name,'.mtl\n']);
+
+%fprintf( f, 'usemtl lightred\n');
+fprintf( f, 'usemtl lambert4SGtexture\n');
+
 fprintf( f, 'o model\n');
 
-writeOBJ_core(f,V,F);
+writeOBJ_core(f,V,F,V(:,[1,2])+0.5);
 
-fprintf( f, ['mtllib ', mtl_file_path,'.mtl\n']);
-fprintf( f, 'usemtl lightred\n');
-fprintf( f, 'o model\n');
+fprintf( f, 'o floor\n');
+fprintf( f, 'usemtl white\n');
 
+floor_y = min(V(:,2)) - 0.002;
 
-fprintf( f, 'v %0.17g %0.17g %0.17g\n', UV');
-
-o floor
-usemtl white
-v  
-v -05	-0.22 -05
-v -05	-0.22  05
-v  05	-0.22  05
-
-f -4 -3 -2 -1
+fprintf( f, 'v %0.17g %0.17g %0.17g\n', [ 05	floor_y -05]);
+fprintf( f, 'v %0.17g %0.17g %0.17g\n', [-05	floor_y -05]);
+fprintf( f, 'v %0.17g %0.17g %0.17g\n', [-05	floor_y  05]);
+fprintf( f, 'v %0.17g %0.17g %0.17g\n', [ 05	floor_y  05]);
+fprintf( f, 'f -4 -3 -2 -1\n');
 
 fclose(f);
 

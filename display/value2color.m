@@ -23,8 +23,9 @@ while v <= numel(varargin)
 end
 
 %% http://stackoverflow.com/questions/13885847/get-colormap-color-for-a-given-value
-colormap(cm);
-cmap = colormap;
+%colormap(cm);
+%cmap = colormap;
+cmap = my_colormap(cm);
 i = round(1+u*(size(cmap,1)-1));
 %%
 close();

@@ -1,0 +1,845 @@
+<?xml version="1.0" ?>
+<s>
+   <Name>
+      scene
+   </Name>
+   <Attributes>
+      
+   </Attributes>
+   <Data>
+      
+   </Data>
+   <Children>
+      <Name>
+         #text
+      </Name>
+      <Attributes>
+         
+      </Attributes>
+      <Data>
+         
+      </Data>
+      <Children>
+         
+      </Children>
+      <Name>
+         Group
+      </Name>
+      <Attributes>
+         
+      </Attributes>
+      <Data>
+         
+      </Data>
+      <Children>
+         <Name>
+            #text
+         </Name>
+         <Attributes>
+            
+         </Attributes>
+         <Data>
+            
+         </Data>
+         <Children>
+            
+         </Children>
+         <Name>
+            TriangleMesh
+         </Name>
+         <Attributes>
+            
+         </Attributes>
+         <Data>
+            
+         </Data>
+         <Children>
+            <Name>
+               #text
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               
+            </Children>
+            <Name>
+               positions
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               <Name>
+                  #text
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+        -20 0 -20
+        -20 0 +20
+        +20 0 +20
+        +20 0 -20
+               </Data>
+               <Children>
+                  
+               </Children>
+            </Children>
+            <Name>
+               #text
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               
+            </Children>
+            <Name>
+               triangles
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               <Name>
+                  #text
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+        0 2 1
+        0 3 2
+               </Data>
+               <Children>
+                  
+               </Children>
+            </Children>
+            <Name>
+               #text
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               
+            </Children>
+            <Name>
+               material
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               <Name>
+                  #text
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+               </Data>
+               <Children>
+                  
+               </Children>
+               <Name>
+                  code
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+               </Data>
+               <Children>
+                  <Name>
+                     #text
+                  </Name>
+                  <Attributes>
+                     
+                  </Attributes>
+                  <Data>
+                     &quot;OBJ&quot;
+                  </Data>
+                  <Children>
+                     
+                  </Children>
+               </Children>
+               <Name>
+                  #text
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+               </Data>
+               <Children>
+                  
+               </Children>
+               <Name>
+                  parameters
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+               </Data>
+               <Children>
+                  <Name>
+                     #text
+                  </Name>
+                  <Attributes>
+                     
+                  </Attributes>
+                  <Data>
+                     
+                  </Data>
+                  <Children>
+                     
+                  </Children>
+                  <Name>
+                     float3
+                  </Name>
+                  <Attributes>
+                     <Name>
+                        name
+                     </Name>
+                     <Value>
+                        Kd
+                     </Value>
+                  </Attributes>
+                  <Data>
+                     
+                  </Data>
+                  <Children>
+                     <Name>
+                        #text
+                     </Name>
+                     <Attributes>
+                        
+                     </Attributes>
+                     <Data>
+                        1 1 1
+                     </Data>
+                     <Children>
+                        
+                     </Children>
+                  </Children>
+                  <Name>
+                     #text
+                  </Name>
+                  <Attributes>
+                     
+                  </Attributes>
+                  <Data>
+                     
+                  </Data>
+                  <Children>
+                     
+                  </Children>
+               </Children>
+               <Name>
+                  #text
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+               </Data>
+               <Children>
+                  
+               </Children>
+            </Children>
+            <Name>
+               #text
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               
+            </Children>
+         </Children>
+         <Name>
+            #text
+         </Name>
+         <Attributes>
+            
+         </Attributes>
+         <Data>
+            
+         </Data>
+         <Children>
+            
+         </Children>
+         <Name>
+            BSplineCurves
+         </Name>
+         <Attributes>
+            
+         </Attributes>
+         <Data>
+            
+         </Data>
+         <Children>
+            <Name>
+               #text
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               
+            </Children>
+            <Name>
+               positions
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               <Name>
+                  #text
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+        0 0 0 0.3
+        0 1 0 0.3
+        0 1 1 0.3
+        1 1 1 0.3
+        2 1 1 0.3
+        2 3 1 0.3
+        4 3 1 0.1
+        4 0 1 0.1
+        2 1 2 0.5
+        2 2 5 0.7
+
+        5 0 0 0.3
+        5 1 0 0.3
+        5 2 0 0.0
+        nan nan nan nan
+
+        5 0 -2 3.0
+        5 1 -2 0.3
+        5 2 -2 0.0
+        nan nan nan nan
+               </Data>
+               <Children>
+                  
+               </Children>
+            </Children>
+            <Name>
+               #text
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               
+            </Children>
+            <Name>
+               indices
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               <Name>
+                  #text
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+        0 1 2 3 4 5 6
+        10
+        14
+               </Data>
+               <Children>
+                  
+               </Children>
+            </Children>
+            <Name>
+               #text
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               
+            </Children>
+            <Name>
+               material
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               <Name>
+                  #text
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+               </Data>
+               <Children>
+                  
+               </Children>
+               <Name>
+                  code
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+               </Data>
+               <Children>
+                  <Name>
+                     #text
+                  </Name>
+                  <Attributes>
+                     
+                  </Attributes>
+                  <Data>
+                     &quot;OBJ&quot;
+                  </Data>
+                  <Children>
+                     
+                  </Children>
+               </Children>
+               <Name>
+                  #text
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+               </Data>
+               <Children>
+                  
+               </Children>
+               <Name>
+                  parameters
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+               </Data>
+               <Children>
+                  <Name>
+                     #text
+                  </Name>
+                  <Attributes>
+                     
+                  </Attributes>
+                  <Data>
+                     
+                  </Data>
+                  <Children>
+                     
+                  </Children>
+                  <Name>
+                     float3
+                  </Name>
+                  <Attributes>
+                     <Name>
+                        name
+                     </Name>
+                     <Value>
+                        Kd
+                     </Value>
+                  </Attributes>
+                  <Data>
+                     
+                  </Data>
+                  <Children>
+                     <Name>
+                        #text
+                     </Name>
+                     <Attributes>
+                        
+                     </Attributes>
+                     <Data>
+                        1 1 1
+                     </Data>
+                     <Children>
+                        
+                     </Children>
+                  </Children>
+                  <Name>
+                     #text
+                  </Name>
+                  <Attributes>
+                     
+                  </Attributes>
+                  <Data>
+                     
+                  </Data>
+                  <Children>
+                     
+                  </Children>
+               </Children>
+               <Name>
+                  #text
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+               </Data>
+               <Children>
+                  
+               </Children>
+            </Children>
+            <Name>
+               #text
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               
+            </Children>
+         </Children>
+         <Name>
+            #text
+         </Name>
+         <Attributes>
+            
+         </Attributes>
+         <Data>
+            
+         </Data>
+         <Children>
+            
+         </Children>
+         <Name>
+            BezierCurves
+         </Name>
+         <Attributes>
+            
+         </Attributes>
+         <Data>
+            
+         </Data>
+         <Children>
+            <Name>
+               #text
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               
+            </Children>
+            <Name>
+               positions
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               <Name>
+                  #text
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+        0 0 -2 0.2
+        8 4 -2 0.2
+       -4 4 -2 0.2
+        4 0 -3 0.2
+               </Data>
+               <Children>
+                  
+               </Children>
+            </Children>
+            <Name>
+               #text
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               
+            </Children>
+            <Name>
+               indices
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               <Name>
+                  #text
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+        0 0
+               </Data>
+               <Children>
+                  
+               </Children>
+            </Children>
+            <Name>
+               #text
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               
+            </Children>
+            <Name>
+               material
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               <Name>
+                  #text
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+               </Data>
+               <Children>
+                  
+               </Children>
+               <Name>
+                  code
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+               </Data>
+               <Children>
+                  <Name>
+                     #text
+                  </Name>
+                  <Attributes>
+                     
+                  </Attributes>
+                  <Data>
+                     &quot;OBJ&quot;
+                  </Data>
+                  <Children>
+                     
+                  </Children>
+               </Children>
+               <Name>
+                  #text
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+               </Data>
+               <Children>
+                  
+               </Children>
+               <Name>
+                  parameters
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+               </Data>
+               <Children>
+                  <Name>
+                     #text
+                  </Name>
+                  <Attributes>
+                     
+                  </Attributes>
+                  <Data>
+                     
+                  </Data>
+                  <Children>
+                     
+                  </Children>
+                  <Name>
+                     float3
+                  </Name>
+                  <Attributes>
+                     <Name>
+                        name
+                     </Name>
+                     <Value>
+                        Kd
+                     </Value>
+                  </Attributes>
+                  <Data>
+                     
+                  </Data>
+                  <Children>
+                     <Name>
+                        #text
+                     </Name>
+                     <Attributes>
+                        
+                     </Attributes>
+                     <Data>
+                        1 0 0
+                     </Data>
+                     <Children>
+                        
+                     </Children>
+                  </Children>
+                  <Name>
+                     #text
+                  </Name>
+                  <Attributes>
+                     
+                  </Attributes>
+                  <Data>
+                     
+                  </Data>
+                  <Children>
+                     
+                  </Children>
+               </Children>
+               <Name>
+                  #text
+               </Name>
+               <Attributes>
+                  
+               </Attributes>
+               <Data>
+                  
+               </Data>
+               <Children>
+                  
+               </Children>
+            </Children>
+            <Name>
+               #text
+            </Name>
+            <Attributes>
+               
+            </Attributes>
+            <Data>
+               
+            </Data>
+            <Children>
+               
+            </Children>
+         </Children>
+         <Name>
+            #text
+         </Name>
+         <Attributes>
+            
+         </Attributes>
+         <Data>
+            
+         </Data>
+         <Children>
+            
+         </Children>
+      </Children>
+      <Name>
+         #text
+      </Name>
+      <Attributes>
+         
+      </Attributes>
+      <Data>
+         
+      </Data>
+      <Children>
+         
+      </Children>
+   </Children>
+</s>
