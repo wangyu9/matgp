@@ -28,8 +28,6 @@ function writeSCENE(xmlFileName,V,F,UV,texture,isoline)
 
     M = material_property('black');
     write_isolines(docRoot,isoline.V,isoline.F,isoline.u,20,M);
-    
-    %write_points(docRoot,isoline.source_point);
   
     xmlwrite(xmlFileName,docRoot);
     %type(xmlFileName);
@@ -38,15 +36,14 @@ end
 
 function [] = write_isolines(docRoot,V,F,u,k,M)
 
-    add_floor = true;
+    add_floor = false;
     if add_floor
-        iso = min(u):(max(u)-min(u))/k:max(u);
-        %iso(1) = min(u)+(max(u)-min(u))/800;
-        iso(1) = min(u)+(max(u)-min(u))/8000;
-        [~,~,t] = IsoLine_helper({F,V},u,iso);
+    iso = min(u):(max(u)-min(u))/k:max(u);
+    iso(1) = min(u)+(max(u)-min(u))/800;
     else
-        [~,~,t] = IsoLine_helper({F,V},u,k);
+    [~,~,t] = IsoLine_helper({F,V},u,iso);
     end
+    % [~,~,t] = IsoLine_helper({F,V},u,k);
     
     for i=1:size(t.isolines,1)
        X = t.isolines{i,1};
@@ -56,13 +53,12 @@ function [] = write_isolines(docRoot,V,F,u,k,M)
 %        L = 1:x;
 %        write_isolines(docRoot,[X,0.002*ones(x,1)],L-1,M);
        
+       if add_floor
        linewidth = 0.002;
-       if add_floor          
-           if i==1
-               linewidth = 0.005;
-           end
+       if i==1
+           linewidth = 0.004;
        end
-       
+        
        x = size(X,1);
        ss = 1;
        while(isnan(X(ss,1)))
@@ -279,7 +275,6 @@ function write_triangle_mesh(docRoot,V,F,UV,M)
     docRoot.appendChild(docRoot.createComment('this is a comment'));
 
 end
-
 
 function write_linesegments(docRoot,V,L,M)
 

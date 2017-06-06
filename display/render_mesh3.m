@@ -61,8 +61,9 @@ end
 %%
 
 %t = tsurf(F,V,'EdgeColor',EdgeColor,'FaceColor','interp','FaceLighting',FaceLighting);
-t = trisurf(F,V(:,1),V(:,2),V(:,3),'EdgeColor',EdgeColor,'FaceColor','interp','FaceLighting',FaceLighting);
-t.Vertices = V*axisangle2matrix([0 0 1],pi)*axisangle2matrix([1 0 0],pi/2);
+VD = V*axisangle2matrix([0 0 1],pi)*axisangle2matrix([1 0 0],pi/2);
+t = trisurf(F,VD(:,1),VD(:,2),VD(:,3),'EdgeColor',EdgeColor,'FaceColor','interp','FaceLighting',FaceLighting);
+%t.Vertices = V*axisangle2matrix([0 0 1],pi)*axisangle2matrix([1 0 0],pi/2);
 colormap(my_colormap(cmap));
 % if(~isempty(c_range))
 %    caxis([c_range(1),c_range(2)]); 
@@ -73,6 +74,7 @@ AO = ambient_occlusion(V,F,V,per_vertex_normals(V,F),1000);
 end
 
 if(~isempty(u))
+    u = (u-min(u))/(max(u)-min(u));
     assert(min(u)>=0);
     assert(max(u)<=1);
     if 0 

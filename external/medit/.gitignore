@@ -1,0 +1,7 @@
+
+.DS_Store
+
+
+# tmp folder when using medit
+/tmp/*
+
