@@ -9,8 +9,9 @@ filename = [];
 collapse_time = [];
 fast_mode = true;
 source_point = [];
+angle = 0;
 % Map of parameter names to variable names
-params_to_variables = containers.Map( {'VertexColor','ScaleColor','FileName','CollapseTime','FastMode','SourcePoint'}, {'C0','u0','filename','collapse_time','fast_mode','source_point'});
+params_to_variables = containers.Map( {'VertexColor','ScaleColor','FileName','CollapseTime','FastMode','SourcePoint','Angle'}, {'C0','u0','filename','collapse_time','fast_mode','source_point','angle'});
 
 %% Shared Parsing Code Segment
 
@@ -54,6 +55,8 @@ end
 %axisangle2matrix([0 1 0],-pi/4)
 %% END of Input Parsing
 %% Preprocessing
+V0 = V0 * axisangle2matrix([0 1 0],angle);
+source_point = source_point * axisangle2matrix([0 1 0],angle);
 dis = mean(V0);
 V0 = V0 - dis;
 source_point = source_point - dis;
@@ -198,9 +201,10 @@ status
 result
 
 if ~isempty(argu.filename)
-    [im,~] = tga_read_image([pathstr,'\screenshot.tga']);
+    [im,~] = tga_read_image(['./screenshot.tga']);
     % im = imread(); % this is not supported.
     imwrite(im,argu.filename);
+    delete(['./screenshot.tga']);
 end
     
 if 0

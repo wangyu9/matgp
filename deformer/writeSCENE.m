@@ -13,8 +13,13 @@ function writeSCENE(xmlFileName,V,F,UV,texture,isoline)
     write_camera(docRoot);
     write_light(docRoot);
     
-    M = material_property('default');
+    M = material_property('black');
+    %M.shadeColor = [0 0 1];
+    if ~isempty(isoline.source_point)
+        write_points(docRoot,isoline.source_point,M);
+    end
     
+    M = material_property('default');
     write_textured_triangle_mesh(docRoot,V,F,UV,M,texture);
     
     fr = min(V(:,2));
@@ -25,12 +30,8 @@ function writeSCENE(xmlFileName,V,F,UV,texture,isoline)
     Ff = [0 1 2;0 2 3]+1; 
     M = material_property('blank');
     write_triangle_mesh(docRoot,Vf,Ff,[],M);
-
-    M = material_property('black');
     
-    if ~isempty(isoline.source_point)
-        write_points(docRoot,isoline.source_point,M);
-    end
+    M = material_property('black');
     
     write_isolines(docRoot,isoline.V,isoline.F,isoline.u,20,M);
     
@@ -48,7 +49,11 @@ function [] = write_isolines(docRoot,V,F,u,k,M)
         iso(1) = min(u)+(max(u)-min(u))/8000;
         [~,~,t] = IsoLine_helper({F,V},u,iso);
     else
-        [~,~,t] = IsoLine_helper({F,V},u,k);
+        %[~,~,t] = IsoLine_helper({F,V},u,k);
+        iso = min(u):(max(u)-min(u))/k:max(u);
+        iso(end) = [];
+        iso(1) = [];
+        [~,~,t] = IsoLine_helper({F,V},u,iso);
     end
     
     for i=1:size(t.isolines,1)
