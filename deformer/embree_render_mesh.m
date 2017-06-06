@@ -54,8 +54,12 @@ end
 %axisangle2matrix([0 1 0],-pi/4)
 %% END of Input Parsing
 %% Preprocessing
-V0 = V0 - mean(V0);
-V0 = V0 .* (0.5/max(max(abs(V0))));
+dis = mean(V0);
+V0 = V0 - dis;
+source_point = source_point - dis;
+s = (0.5/max(max(abs(V0))));
+V0 = V0 .* s;
+source_point = source_point .* s;
 %%
 %%
     fl = F0';

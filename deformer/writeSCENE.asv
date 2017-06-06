@@ -27,8 +27,13 @@ function writeSCENE(xmlFileName,V,F,UV,texture,isoline)
     write_triangle_mesh(docRoot,Vf,Ff-1,[],M);
 
     M = material_property('black');
+    
+    if ~isempty(isoline.source_point)
+        write_points(docRoot,isoline.source_point,M);
+    end
+    
     write_isolines(docRoot,isoline.V,isoline.F,isoline.u,20,M);
-  
+    
     xmlwrite(xmlFileName,docRoot);
     %type(xmlFileName);
 
@@ -38,12 +43,13 @@ function [] = write_isolines(docRoot,V,F,u,k,M)
 
     add_floor = false;
     if add_floor
-    iso = min(u):(max(u)-min(u))/k:max(u);
-    iso(1) = min(u)+(max(u)-min(u))/800;
+        iso = min(u):(max(u)-min(u))/k:max(u);
+        %iso(1) = min(u)+(max(u)-min(u))/800;
+        iso(1) = min(u)+(max(u)-min(u))/8000;
+        [~,~,t] = IsoLine_helper({F,V},u,iso);
     else
-    [~,~,t] = IsoLine_helper({F,V},u,iso);
+        [~,~,t] = IsoLine_helper({F,V},u,k);
     end
-    % [~,~,t] = IsoLine_helper({F,V},u,k);
     
     for i=1:size(t.isolines,1)
        X = t.isolines{i,1};
@@ -53,12 +59,13 @@ function [] = write_isolines(docRoot,V,F,u,k,M)
 %        L = 1:x;
 %        write_isolines(docRoot,[X,0.002*ones(x,1)],L-1,M);
        
-       if add_floor
        linewidth = 0.002;
-       if i==1
-           linewidth = 0.004;
+       if add_floor          
+           if i==1
+               linewidth = 0.005;
+           end
        end
-        
+       
        x = size(X,1);
        ss = 1;
        while(isnan(X(ss,1)))
@@ -82,6 +89,16 @@ function [] = write_isolines(docRoot,V,F,u,k,M)
        VL = X(ss:ee-1,:);
        vl = size(VL,1);
        write_linesegments(docRoot,[VL,linewidth*ones(vl,1)],0:vl-1,M);
+    end
+end
+
+function write_points(docRoot,P,M)
+    assert(size(P,2)==3);
+    M = material_property('black');
+    [Vp,Fp] = readOBJ([path_to_matgp,'/data/mesh/sphereSmall.obj']);
+    Vp = Vp * 0.05/0.2;
+    for i = 1:size(P,1)
+        write_triangle_mesh(docRoot,bsxfun(@plus,Vp,P(i,:)),Fp,[],M);
     end
 end
 
@@ -275,6 +292,7 @@ function write_triangle_mesh(docRoot,V,F,UV,M)
     docRoot.appendChild(docRoot.createComment('this is a comment'));
 
 end
+
 
 function write_linesegments(docRoot,V,L,M)
 

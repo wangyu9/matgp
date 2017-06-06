@@ -15,7 +15,7 @@ function writeSCENE(xmlFileName,V,F,UV,texture,isoline)
     
     M = material_property('default');
     
-    write_textured_triangle_mesh(docRoot,V,F-1,UV,M,texture);
+    write_textured_triangle_mesh(docRoot,V,F,UV,M,texture);
     
     fr = min(V(:,2));
     Vf = [   05	fr -05;...
@@ -24,13 +24,16 @@ function writeSCENE(xmlFileName,V,F,UV,texture,isoline)
 		  05	fr  05];
     Ff = [0 1 2;0 2 3]+1; 
     M = material_property('blank');
-    write_triangle_mesh(docRoot,Vf,Ff-1,[],M);
+    write_triangle_mesh(docRoot,Vf,Ff,[],M);
 
     M = material_property('black');
+    
+    if ~isempty(isoline.source_point)
+        write_points(docRoot,isoline.source_point,M);
+    end
+    
     write_isolines(docRoot,isoline.V,isoline.F,isoline.u,20,M);
     
-    %write_points(docRoot,isoline.source_point);
-  
     xmlwrite(xmlFileName,docRoot);
     %type(xmlFileName);
 
@@ -38,7 +41,7 @@ end
 
 function [] = write_isolines(docRoot,V,F,u,k,M)
 
-    add_floor = true;
+    add_floor = false;
     if add_floor
         iso = min(u):(max(u)-min(u))/k:max(u);
         %iso(1) = min(u)+(max(u)-min(u))/800;
@@ -86,6 +89,15 @@ function [] = write_isolines(docRoot,V,F,u,k,M)
        VL = X(ss:ee-1,:);
        vl = size(VL,1);
        write_linesegments(docRoot,[VL,linewidth*ones(vl,1)],0:vl-1,M);
+    end
+end
+
+function write_points(docRoot,P,M)
+    assert(size(P,2)==3);
+    [Vp,Fp] = readOBJ([path_to_matgp,'/data/mesh/sphereSmall.obj']);
+    Vp = Vp * 0.005/0.2;
+    for i = 1:size(P,1)
+        write_triangle_mesh(docRoot,bsxfun(@plus,Vp,P(i,:)),Fp,[],M);
     end
 end
 
@@ -244,6 +256,8 @@ end
 
 function write_textured_triangle_mesh(docRoot,V,F,UV,M,texture)
 
+    F = F - 1;
+
     scene = docRoot.getDocumentElement;
 
     TriangleMesh = docRoot.createElement('TriangleMesh'); 
@@ -262,6 +276,8 @@ function write_textured_triangle_mesh(docRoot,V,F,UV,M,texture)
 end
 
 function write_triangle_mesh(docRoot,V,F,UV,M)
+
+    F = F - 1;
 
     scene = docRoot.getDocumentElement;
 
