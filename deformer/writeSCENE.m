@@ -1,4 +1,4 @@
-function writeSCENE(xmlFileName,V,F,UV,texture,isoline)
+function writeSCENE(xmlFileName,V,F,UV,texture,isoline,argu)
 
     docRoot = com.mathworks.xml.XMLUtils.createDocument('scene');
 
@@ -22,18 +22,21 @@ function writeSCENE(xmlFileName,V,F,UV,texture,isoline)
     M = material_property('default');
     write_textured_triangle_mesh(docRoot,V,F,UV,M,texture);
     
-    fr = min(V(:,2));
-    Vf = [   05	fr -05;...
-		 -05	fr -05;...
-		 -05	fr  05;...
-		  05	fr  05];
-    Ff = [0 1 2;0 2 3]+1; 
-    M = material_property('blank');
-    write_triangle_mesh(docRoot,Vf,Ff,[],M);
+    if(argu.draw_plane)
+        fr = min(V(:,2));
+        Vf = [   05	fr -05;...
+             -05	fr -05;...
+             -05	fr  05;...
+              05	fr  05];
+        Ff = [0 1 2;0 2 3]+1; 
+        M = material_property('blank');
+        write_triangle_mesh(docRoot,Vf,Ff,[],M);
+    end
     
-    M = material_property('black');
-    
-    write_isolines(docRoot,isoline.V,isoline.F,isoline.u,20,M);
+    if(isoline.draw)
+        M = material_property('black');
+        write_isolines(docRoot,isoline.V,isoline.F,isoline.u,20,M);
+    end
     
     xmlwrite(xmlFileName,docRoot);
     %type(xmlFileName);

@@ -10,8 +10,13 @@ collapse_time = [];
 fast_mode = true;
 source_point = [];
 angle = 0;
+draw_isoline = true;
+draw_plane = true;
+color_map = 'RdYlBu';
+color_multiplier = 1;
 % Map of parameter names to variable names
-params_to_variables = containers.Map( {'VertexColor','ScaleColor','FileName','CollapseTime','FastMode','SourcePoint','Angle'}, {'C0','u0','filename','collapse_time','fast_mode','source_point','angle'});
+params_to_variables = containers.Map( { 'VertexColor',  'ScaleColor',   'FileName', 'CollapseTime', 'FastMode', 'SourcePoint',  'Angle',    'DrawIsoline',  'ColorMap', 'DrawPlane',    'ColorMultiplier'},...
+                                       {'C0',           'u0',           'filename', 'collapse_time','fast_mode','source_point', 'angle',    'draw_isoline', 'color_map','draw_plane',   'color_multiplier'});
 
 %% Shared Parsing Code Segment
 
@@ -44,11 +49,17 @@ end
 V0 = VV;
 F0 = FF;
 %%
-if(isempty(C0)&&~isempty(u0))
+
+if(min(u0)<0||max(u0)>1)
     u0s = (u0-min(u0))/(max(u0)-min(u0));
+else
+    u0s = u0;
+end
+
+if(isempty(C0)&&~isempty(u0))
     %C0 = 0.42*uint8(255*value2color(u0s,'ColorMap','default'))+1;
     %C0 = uint8(0.3*255*value2color(u0,'ColorMap','jet'))+1;
-    C0 = 0.42*uint8(255*value2color(u0s,'ColorMap','RdYlBu'))+1;
+    C0 = 0.42*uint8(color_multiplier*255*value2color(u0s,'ColorMap',color_map))+1;
     %C0 = 0.42*uint8(255*value2color(u0s,'ColorMap','heat'))+1;
 end
 
@@ -56,13 +67,17 @@ end
 %% END of Input Parsing
 %% Preprocessing
 V0 = V0 * axisangle2matrix([0 1 0],angle);
-source_point = source_point * axisangle2matrix([0 1 0],angle);
-dis = mean(V0);
-V0 = V0 - dis;
-source_point = source_point - dis;
-s = (0.5/max(max(abs(V0))));
-V0 = V0 .* s;
-source_point = source_point .* s;
+if ~isempty(source_point)
+    source_point = source_point * axisangle2matrix([0 1 0],angle);
+end    
+    dis = mean(V0);
+    V0 = V0 - dis;
+    s = (0.5/max(max(abs(V0))));
+    V0 = V0 .* s;
+if ~isempty(source_point)
+    source_point = source_point - dis;
+    source_point = source_point .* s;
+end
 %%
 %%
     fl = F0';
@@ -85,10 +100,12 @@ source_point = source_point .* s;
     isoline.V = V0;
     isoline.F = F0;
     isoline.u = u0;
+    isoline.draw = draw_isoline;
     isoline.source_point = source_point;
     argu = struct();
     argu.filename = filename;
     argu.collapse_time = collapse_time;
+    argu.draw_plane = draw_plane;
     embree_render_mesh_core(V,F,UV,isoline,argu);
 end
 
@@ -176,7 +193,7 @@ end
 ecs_file_path = [prefix '.ecs'];
 xml_file_path = [prefix '.xml'];
 
-writeSCENE(xml_file_path,V,F,UV,texture(),isoline);
+writeSCENE(xml_file_path,V,F,UV,texture(),isoline,argu);
 [pathstr,name,~] = fileparts(xml_file_path);
 
 argu2 = struct();
