@@ -55,7 +55,8 @@ function [V,T,F] = tetgen(SV,SF,IV,allow_resampling)
   % flags = 'pq100Y';% wangyu
   
   % call tetgen
-  path_to_tetgen = 'C:\WorkSpace\MATLAB\bbw_demo\tetgen1.5.0\tetgen'; %wangyu
+  path_to_tetgen = 'D:\WorkSpace2\MATLAB\bbw_demo\tetgen1.5.0\tetgen'; %wangyu
+  %path_to_tetgen = 'C:\WorkSpace\MATLAB\bbw_demo\tetgen1.5.0\tetgen'; %wangyu
   command = [path_to_tetgen ' ' flags ' ' poly_filename];
   %fprintf(command);
   [status, result] = system(command);

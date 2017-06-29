@@ -14,9 +14,10 @@ draw_isoline = true;
 draw_plane = true;
 color_map = 'RdYlBu';
 color_multiplier = 1;
+auto_scale = true;
 % Map of parameter names to variable names
-params_to_variables = containers.Map( { 'VertexColor',  'ScaleColor',   'FileName', 'CollapseTime', 'FastMode', 'SourcePoint',  'Angle',    'DrawIsoline',  'ColorMap', 'DrawPlane',    'ColorMultiplier'},...
-                                       {'C0',           'u0',           'filename', 'collapse_time','fast_mode','source_point', 'angle',    'draw_isoline', 'color_map','draw_plane',   'color_multiplier'});
+params_to_variables = containers.Map( { 'VertexColor',  'ScaleColor',   'FileName', 'CollapseTime', 'FastMode', 'SourcePoint',  'Angle',    'DrawIsoline',  'ColorMap', 'DrawPlane',    'ColorMultiplier',  'AutoScale'},...
+                                       {'C0',           'u0',           'filename', 'collapse_time','fast_mode','source_point', 'angle',    'draw_isoline', 'color_map','draw_plane',   'color_multiplier', 'auto_scale'});
 
 %% Shared Parsing Code Segment
 
@@ -50,7 +51,7 @@ V0 = VV;
 F0 = FF;
 %%
 
-if(min(u0)<0||max(u0)>1)
+if(auto_scale)%min(u0)<0||max(u0)>1)
     u0s = (u0-min(u0))/(max(u0)-min(u0));
 else
     u0s = u0;
@@ -221,6 +222,10 @@ if ~isempty(argu.filename)
     [im,~] = tga_read_image(['./screenshot.tga']);
     % im = imread(); % this is not supported.
     imwrite(im,argu.filename);
+    mkdir([argu.filename,'.dir']);
+    copyfile(ecs_file_path,[argu.filename,'.dir/embree.ecs']);
+    copyfile(xml_file_path,[argu.filename,'.dir/embree.xml']);
+    copyfile('D:\WorkSpace\temp\tmp.ppm',[argu.filename,'.dir/tmp.ppm']);
     delete(['./screenshot.tga']);
 end
     

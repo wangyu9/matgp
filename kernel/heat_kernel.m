@@ -35,7 +35,7 @@ end
 n = size(EV,1);
 k = size(EV,2);
 
-assert(min(min(ED))>=0);
+assert(min(min(ED))>=-1e-10);
 assert(k==size(ED,1));
 assert(k==size(ED,2));
 
