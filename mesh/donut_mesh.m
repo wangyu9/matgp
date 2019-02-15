@@ -1,6 +1,9 @@
-function [V,F] = donut_mesh(VL,m,d)
+function [V,F] = donut_mesh(VL,m,d,close_loop)
+%%
+% See example_donut_mesh.m
+%%
 %
-close_loop = false;
+% close_loop = false;
 %%
 n = size(VL,1);
 VL = bsxfun(@plus,VL,[d,0,0]);

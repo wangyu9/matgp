@@ -15,9 +15,10 @@ draw_plane = true;
 color_map = 'RdYlBu';
 color_multiplier = 1;
 auto_scale = true;
+hold = true;
 % Map of parameter names to variable names
-params_to_variables = containers.Map( { 'VertexColor',  'ScaleColor',   'FileName', 'CollapseTime', 'FastMode', 'SourcePoint',  'Angle',    'DrawIsoline',  'ColorMap', 'DrawPlane',    'ColorMultiplier',  'AutoScale'},...
-                                       {'C0',           'u0',           'filename', 'collapse_time','fast_mode','source_point', 'angle',    'draw_isoline', 'color_map','draw_plane',   'color_multiplier', 'auto_scale'});
+params_to_variables = containers.Map( { 'VertexColor',  'ScaleColor',   'FileName', 'CollapseTime', 'FastMode', 'SourcePoint',  'Angle',    'DrawIsoline',  'ColorMap', 'DrawPlane',    'ColorMultiplier',  'AutoScale', 'Hold'},...
+                                       {'C0',           'u0',           'filename', 'collapse_time','fast_mode','source_point', 'angle',    'draw_isoline', 'color_map','draw_plane',   'color_multiplier', 'auto_scale', 'hold'});
 
 %% Shared Parsing Code Segment
 
@@ -55,6 +56,10 @@ if(auto_scale)%min(u0)<0||max(u0)>1)
     u0s = (u0-min(u0))/(max(u0)-min(u0));
 else
     u0s = u0;
+end
+
+if(size(C0,1)==1&&size(C0,2)==3)
+    C0 = repmat(C0,[size(V0,1),1]);
 end
 
 if(isempty(C0)&&~isempty(u0))
@@ -107,7 +112,7 @@ end
     argu.filename = filename;
     argu.collapse_time = collapse_time;
     argu.draw_plane = draw_plane;
-    embree_render_mesh_core(V,F,UV,isoline,argu);
+    embree_render_mesh_core(V,F,UV,isoline,argu,hold);
 end
 
 function [im,UV,XY] = texture_map(F,C,n)
@@ -180,7 +185,7 @@ t.map_Ns = [];%'ones.ppm';
 t.map_Bump = [];%'ones.ppm';
 end
 
-function [] = embree_render_mesh_core(V,F,UV,isoline,argu)
+function [] = embree_render_mesh_core(V,F,UV,isoline,argu,hold)
 
 params = [];
 
@@ -205,7 +210,12 @@ writeECS(ecs_file_path,[name,'.xml'],argu2);
 % command = [path_to_viewer ' -c ' ecs_file_path ' --verbose 100'];
 
 path_to_viewer = 'D:\WorkSpace\renderer\embree\build\Release\pathtracer';
+if ~hold
+    path_to_viewer = ['start /b ', path_to_viewer];
+    % do 'start /b' so it does not block.
+end
 command = [path_to_viewer ' -c ' ecs_file_path ' --verbose 100 --threads 16 '];
+
 
 if ~isempty(argu.collapse_time)
     command = [command, sprintf(' --collapse_time %f',argu.collapse_time)];

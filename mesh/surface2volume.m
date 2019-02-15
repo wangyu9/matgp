@@ -11,4 +11,4 @@ function [V2,F2] = surface2volume(V,F,d)
 assert(size(d,1)==1);
 assert(size(d,2)==3);
 
-[V2,F2] = surface2volume(V,bsxfun(@plus,V,d),F);
+[V2,F2] = surface2volume_core(V,bsxfun(@plus,V,d),F);

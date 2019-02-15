@@ -16,6 +16,9 @@ FaceLighting = 'gouraud';%'phong';
 EdgeColor = 'none';
 LightMultiplier = 1;
 
+VP = [];
+VN = [];
+
 ii=1;
 while(ii<=nvar)
    if(strcmp(varargin{ii},'view'))
@@ -45,6 +48,12 @@ while(ii<=nvar)
    elseif(strcmp(varargin{ii},'ColorAxis'))
        c_range = varargin{ii+1};
        ii = ii + 1;
+   elseif(strcmp(varargin{ii},'Quiver'))
+       Quiver = varargin{ii+1};
+       assert(size(Quiver,2)==6);
+       VP = Quiver(:,1:3);
+       VN = Quiver(:,4:6);
+       ii = ii + 1;   
    elseif(strcmp(varargin{ii},'EdgeColor'))
        EdgeColor = varargin{ii+1};
        ii = ii + 1;    
@@ -59,9 +68,15 @@ end
 
 
 %%
+if(size(V,2)==2)
+   warning('z axis is missing! Append zero');
+   V = [V,zeros([size(V,1),1])];
+end
+%%
 
 %t = tsurf(F,V,'EdgeColor',EdgeColor,'FaceColor','interp','FaceLighting',FaceLighting);
-VD = V*axisangle2matrix([0 0 1],pi)*axisangle2matrix([1 0 0],pi/2);
+R = axisangle2matrix([0 0 1],pi)*axisangle2matrix([1 0 0],pi/2);
+VD = V*R;
 t = trisurf(F,VD(:,1),VD(:,2),VD(:,3),'EdgeColor',EdgeColor,'FaceColor','interp','FaceLighting',FaceLighting);
 %t.Vertices = V*axisangle2matrix([0 0 1],pi)*axisangle2matrix([1 0 0],pi/2);
 colormap(my_colormap(cmap));
@@ -70,7 +85,13 @@ colormap(my_colormap(cmap));
 % end
 
 if(isempty(AO))
-AO = ambient_occlusion(V,F,V,per_vertex_normals(V,F),1000);
+    AO = ambient_occlusion(V,F,V,per_vertex_normals(V,F),1000);
+end
+
+if(~isempty(VP))
+   VP = VP * R;
+   VN = VN * R
+   quiver3(VP(:,1),VP(:,2),VP(:,3),VN(:,1),VN(:,2),VN(:,3),'ShowArrowHead','off'); 
 end
 
 if(~isempty(u))

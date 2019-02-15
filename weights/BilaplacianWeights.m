@@ -1,4 +1,4 @@
-function [W]=HarmonicWeights(V,TF,iC,BC,edge_bilap)
+function [W]=BilaplacianWeights(V,TF,iC,BC,edge_bilap)
 % V is all vertices
 % iC is list of boundary vertices
 % BC is boundary conditions on B.

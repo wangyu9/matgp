@@ -21,11 +21,12 @@ n = size(V1,1);
 BPC21 = BPC11+n;
 BPC12 = [BPC11(2:end,:);BPC11(1,:)]; %trick to make the chain "closed"
 BPC22 = BPC12+n;
-% connect_F = [BPC11,BPC21,BPC22;BPC11,BPC22,BPC12];
-connect_F = [BPC11,BPC22,BPC21;BPC11,BPC12,BPC22]; % this is for the consideration of normal directions
+connect_F = [BPC11,BPC21,BPC22;BPC11,BPC22,BPC12];
+% connect_F = [BPC11,BPC22,BPC21;BPC11,BPC12,BPC22]; % this is for the consideration of normal directions
 
 V2 = [V1;V2];
 F2 = [[F(:,2),F(:,1),F(:,3)];F+n;connect_F];
+% F2 = [F;[F(:,2),F(:,1),F(:,3)]+n;connect_F];
 
 end
 

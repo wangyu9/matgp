@@ -1,8 +1,38 @@
-function [ls] = bold_plot2(u)
+function [p] = bold_plot2(u,varargin)
+
+line_colors = []
+params_to_variables = containers.Map( { 'LineColors'},...
+                                       {'line_colors'});
+
+
+%% Shared Parsing Code Segment
+
+v = 1;
+while v <= numel(varargin)
+    param_name = varargin{v};
+    if isKey(params_to_variables,param_name)
+        assert(v+1<=numel(varargin));
+        v = v+1;
+        % Trick: use feval on anonymous function to use assignin to this workspace 
+        feval(@()assignin('caller',params_to_variables(param_name),varargin{v}));
+    else
+      error('Unsupported parameter: %s',varargin{v});
+    end
+    v=v+1;
+end
+%%
+
+p = []
 
 h = figure('Position',[0,0,1440,1080],'PaperPositionMode', 'auto');
 %h = figure('PaperPositionMode', 'auto');
 set(gcf,'papersize',[16 12])
+
+set(h,'defaultAxesColorOrder',[get(h,'defaultAxesColorOrder');0.25,0.25,0.25])
+
+if ~isempty(line_colors)
+   set(h,'defaultAxesColorOrder',line_colors);
+end
 
 set(gca,'fontsize',20,'linewidth',2)
 
@@ -35,3 +65,6 @@ end
 set(h,'Units','Inches');
 pos = get(h,'Position');
 set(h,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+
+p.ls = ls;
+p.h = h;
