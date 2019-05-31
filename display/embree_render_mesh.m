@@ -10,15 +10,16 @@ collapse_time = [];
 fast_mode = true;
 source_point = [];
 angle = 0;
-draw_isoline = true;
+draw_isoline = false;%true;
 draw_plane = true;
 color_map = 'RdYlBu';
 color_multiplier = 1;
 auto_scale = true;
 hold = true;
+quiver = zeros(0,3);
 % Map of parameter names to variable names
-params_to_variables = containers.Map( { 'VertexColor',  'ScaleColor',   'FileName', 'CollapseTime', 'FastMode', 'SourcePoint',  'Angle',    'DrawIsoline',  'ColorMap', 'DrawPlane',    'ColorMultiplier',  'AutoScale', 'Hold'},...
-                                       {'C0',           'u0',           'filename', 'collapse_time','fast_mode','source_point', 'angle',    'draw_isoline', 'color_map','draw_plane',   'color_multiplier', 'auto_scale', 'hold'});
+params_to_variables = containers.Map( { 'VertexColor',  'ScaleColor',   'FileName', 'CollapseTime', 'FastMode', 'SourcePoint',  'Angle',    'DrawIsoline',  'ColorMap', 'DrawPlane',    'ColorMultiplier',  'AutoScale',  'Hold', 'Quiver'},...
+                                       {'C0',           'u0',           'filename', 'collapse_time','fast_mode','source_point', 'angle',    'draw_isoline', 'color_map','draw_plane',   'color_multiplier', 'auto_scale', 'hold', 'quiver'});
 
 %% Shared Parsing Code Segment
 
@@ -36,6 +37,14 @@ while v <= numel(varargin)
     v=v+1;
 end
 
+%%
+if ~isempty(filename)
+    [filepath,name,ext] = fileparts(filename);
+    if ~exist(filepath, 'dir')
+      sprintf('Warning: File Path does not exist, path created: %s\n',filepath)
+      mkdir(filepath);
+    end
+end
 %%
 VV = V0;
 FF = F0;
@@ -72,17 +81,25 @@ end
 %axisangle2matrix([0 1 0],-pi/4)
 %% END of Input Parsing
 %% Preprocessing
-V0 = V0 * axisangle2matrix([0 1 0],angle);
+RM = axisangle2matrix([0 1 0],angle);
+V0 = V0 * RM;
 if ~isempty(source_point)
-    source_point = source_point * axisangle2matrix([0 1 0],angle);
+    source_point = source_point * RM;
 end    
-    dis = mean(V0);
-    V0 = V0 - dis;
-    s = (0.5/max(max(abs(V0))));
-    V0 = V0 .* s;
+dis = mean(V0);
+V0 = V0 - dis;
+s = (0.5/max(max(abs(V0))));
+V0 = V0 .* s;
 if ~isempty(source_point)
     source_point = source_point - dis;
     source_point = source_point .* s;
+end
+if size(quiver,1)>0
+   quiver(:,1:3) = quiver(:,1:3) * RM;
+   quiver(:,4:6) = quiver(:,4:6) * RM;
+   quiver(:,1:3) = quiver(:,1:3) - dis;
+   quiver(:,1:3) = quiver(:,1:3) * s;
+   % cannot do this, since the scale will be lost. quiver(:,4:6) = quiver(:,4:6) * s;
 end
 %%
 %%
@@ -96,7 +113,9 @@ end
     [im,UV,XY] = texture_map(F,C,n);
     im2 = imresize(im,2,'bilinear');
     %%
-    imwrite(im,'D:\WorkSpace\temp\tmp.ppm');
+    ID = num2str(randi([0,10^7]));
+    %%
+    imwrite(im,['D:\WorkSpace\temp\tmp',ID,'.ppm']);
 %     imwrite(zeros(size(im)),'D:\WorkSpace\temp\zeros.ppm');
 %     imwrite(ones(size(im)),'D:\WorkSpace\temp\ones.ppm');
 %     imwrite(0.5*ones(size(im)),'D:\WorkSpace\temp\half.ppm');
@@ -112,6 +131,8 @@ end
     argu.filename = filename;
     argu.collapse_time = collapse_time;
     argu.draw_plane = draw_plane;
+    argu.quiver = quiver;
+    argu.ID = ID;
     embree_render_mesh_core(V,F,UV,isoline,argu,hold);
 end
 
@@ -176,11 +197,11 @@ function [im,UV,XY] = texture_map3(F,C,n)
     %im(XY(:,1),XY(:,2),:);
 end
 
-function [t] = texture()
+function [t] = texture(file)
 t = struct();
 t.map_d = [];%'ones.ppm';
-t.map_Kd = 'tmp.ppm';
-t.map_Ks = [];%'red.ppm';
+t.map_Kd = file;%'tmp.ppm';
+t.map_Ks = file;%'tmp.ppm';%[];%'red.ppm';
 t.map_Ns = [];%'ones.ppm';
 t.map_Bump = [];%'ones.ppm';
 end
@@ -191,30 +212,37 @@ params = [];
 
 prefix = 'D:\WorkSpace\temp\embree'; % specify an temp file prefix.
 
-% get a free temporary prefix
-if ~exist('prefix','var')
-  prefix = tempprefix();
-end
+prefix = [prefix, argu.ID];
+
+% % get a free temporary prefix
+% if ~exist('prefix','var')
+%   prefix = tempprefix();
+% end
 
 ecs_file_path = [prefix '.ecs'];
 xml_file_path = [prefix '.xml'];
 
-writeSCENE(xml_file_path,V,F,UV,texture(),isoline,argu);
+writeSCENE(xml_file_path,V,F,UV,texture(['tmp',argu.ID,'.ppm']),isoline,argu);
 [pathstr,name,~] = fileparts(xml_file_path);
 
 argu2 = struct();
 argu2.image_size = [800,800];
 writeECS(ecs_file_path,[name,'.xml'],argu2);
 
+tmp_file_name = ['./screenshot',argu.ID,'.tga'];
+
 % path_to_viewer = 'C:\WorkSpace\Tools\embree\Embree_v2.15.0_x64\bin\pathtracer.exe';
 % command = [path_to_viewer ' -c ' ecs_file_path ' --verbose 100'];
 
 path_to_viewer = 'D:\WorkSpace\renderer\embree\build\Release\pathtracer';
+
+%assert(~hold)
+
 if ~hold
     path_to_viewer = ['start /b ', path_to_viewer];
     % do 'start /b' so it does not block.
 end
-command = [path_to_viewer ' -c ' ecs_file_path ' --verbose 100 --threads 16 '];
+command = [path_to_viewer ' -c ' ecs_file_path ' -o ' tmp_file_name ' --verbose 100 --threads 16 ' ];
 
 
 if ~isempty(argu.collapse_time)
@@ -222,21 +250,24 @@ if ~isempty(argu.collapse_time)
 end
 
 fprintf('%s\n',command);
-
+% /min 
+% https://www.mathworks.com/matlabcentral/answers/374614-how-to-run-a-bat-file-in-background-without-opening-command-prompt
 [status, result] = system( command );
 
 status
 result
 
 if ~isempty(argu.filename)
-    [im,~] = tga_read_image(['./screenshot.tga']);
+    
+    %[im,~] = tga_read_image(tmp_file_name); % this does not work somehow
+    [im,~] = tga_read_image('./screenshot.tga');
     % im = imread(); % this is not supported.
     imwrite(im,argu.filename);
     mkdir([argu.filename,'.dir']);
     copyfile(ecs_file_path,[argu.filename,'.dir/embree.ecs']);
     copyfile(xml_file_path,[argu.filename,'.dir/embree.xml']);
-    copyfile('D:\WorkSpace\temp\tmp.ppm',[argu.filename,'.dir/tmp.ppm']);
-    delete(['./screenshot.tga']);
+    copyfile(['D:\WorkSpace\temp\tmp',argu.ID,'.ppm'],[argu.filename,'.dir/tmp',argu.ID,'.ppm']);
+    delete(tmp_file_name);
 end
     
 if 0

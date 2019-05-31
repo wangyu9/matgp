@@ -84,8 +84,12 @@ colormap(my_colormap(cmap));
 %    caxis([c_range(1),c_range(2)]); 
 % end
 
+try
 if(isempty(AO))
     AO = ambient_occlusion(V,F,V,per_vertex_normals(V,F),1000);
+end
+catch
+   AO = ones(size(V,1),1); 
 end
 
 if(~isempty(VP))

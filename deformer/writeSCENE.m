@@ -29,13 +29,28 @@ function writeSCENE(xmlFileName,V,F,UV,texture,isoline,argu)
              -05	fr  05;...
               05	fr  05];
         Ff = [0 1 2;0 2 3]+1; 
-        M = material_property('blank');
+        % M = material_property('blank');
+        M = material_property('grey');
         write_triangle_mesh(docRoot,Vf,Ff,[],M);
     end
     
     if(isoline.draw)
         M = material_property('black');
         write_isolines(docRoot,isoline.V,isoline.F,isoline.u,20,M);
+    end
+    
+    if(size(argu.quiver,1)>0)
+        scale = mean(max(V)-min(V)) * 0.05;
+        M = material_property('black');
+        for i=1:size(argu.quiver)
+            WN = argu.quiver(i,4:6);
+            [QV,QF] = quiver_mesh(WN./norm(WN),scale*norm(WN));
+            QV = QV + argu.quiver(i,1:3);
+            if(size(argu.quiver,2)>6)
+               M = material_property_quiver(argu.quiver(i,7:9));
+            end
+            write_triangle_mesh(docRoot,QV,QF,[],M);
+        end
     end
     
     xmlwrite(xmlFileName,docRoot);
@@ -123,6 +138,12 @@ function [M] = material_property(material)
             M.glitterColor = [0 0 0];
             M.glitterSpread = 0.0;
             M.shadeColor = [1 1 1];
+        case 'grey'
+            M = struct();
+            M.eta = 1.5;
+            M.glitterColor = [0 0 0];
+            M.glitterSpread = 0.0;
+            M.shadeColor = [1 1 1] * 0.2;
         case 'black'
             M = struct();
             M.eta = 2;
@@ -136,6 +157,14 @@ function [M] = material_property(material)
             M.glitterSpread = 0.1;
             M.shadeColor = [0.5 0.5 0.5];
     end
+end
+
+function [M] = material_property_quiver(rgb)
+    M = struct();
+    M.eta = 1.45;
+    M.glitterColor = [0 0 0];
+    M.glitterSpread = 0.1;
+    M.shadeColor = rgb;
 end
 
 function append_float3(self,docRoot,name,value)
@@ -167,9 +196,12 @@ function write_material(docRoot,TriangleMesh,M,texture)
         code = docRoot.createElement('code'); 
         material.appendChild(code);
         code.appendChild(docRoot.createTextNode('"OBJ"'));
-    
+       
         parameters = docRoot.createElement('parameters'); 
         material.appendChild(parameters);
+        
+        append_float3(parameters,docRoot,'Kd',[1,1,1]*0.8);
+        append_float3(parameters,docRoot,'Ks',[1,1,1]*0.3);
         
         if ~isempty(texture.map_d)
             append_texture3d(parameters,docRoot,'map_d',texture.map_d);
@@ -350,9 +382,13 @@ function write_camera(docRoot)
     {'up','0 1 0'},...
     {'fov','14'}};
 % donut & dirac
-    C = {{'from','0 3 -6'},...
+%     C = {{'from','0 3 -6'},...
+%     {'to','0 0 0'},...
+%     {'up','0 1 -0.5'},...
+%     {'fov','11'}};
+    C = {{'from','0 2 -6'},...
     {'to','0 0 0'},...
-    {'up','0 1 -0.5'},...
+    {'up','0 1 -0.2'},...
     {'fov','11'}};
     write_element_with_attributes(docRoot,'PerspectiveCamera',C,[]);
 end

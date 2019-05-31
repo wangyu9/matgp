@@ -33,6 +33,7 @@ function [VV,FF,M] = upsample_with_faces_index(V,F,varargin)
 %   
 
   keep_duplicates = false;
+  interpolate = true;
   v = 1;
   while v <= numel(varargin)
     switch varargin{v}
@@ -40,6 +41,10 @@ function [VV,FF,M] = upsample_with_faces_index(V,F,varargin)
       v = v+1;
       assert(v<=numel(varargin));
       keep_duplicates = varargin{v};
+    case 'Interpolate'
+      v = v+1;
+      assert(v<=numel(varargin));
+      interpolate = varargin{v};
     otherwise
       error(['Unknown parameter: "' varargin{v} '"']);
     end
@@ -65,14 +70,19 @@ function [VV,FF,M] = upsample_with_faces_index(V,F,varargin)
     
     nn = size(F,1);
     mm = size(V,1);
-    new_M = [...
-        sparse(1:nn,F(:,1),0.5,nn,mm)+sparse(1:nn,F(:,2),0.5,nn,mm);...
-        sparse(1:nn,F(:,2),0.5,nn,mm)+sparse(1:nn,F(:,3),0.5,nn,mm);...
-        sparse(1:nn,F(:,3),0.5,nn,mm)+sparse(1:nn,F(:,1),0.5,nn,mm)];
+    if interpolate
+        new_M = [...
+            sparse(1:nn,F(:,1),0.5,nn,mm)+sparse(1:nn,F(:,2),0.5,nn,mm);...
+            sparse(1:nn,F(:,2),0.5,nn,mm)+sparse(1:nn,F(:,3),0.5,nn,mm);...
+            sparse(1:nn,F(:,3),0.5,nn,mm)+sparse(1:nn,F(:,1),0.5,nn,mm)];
+    else
+        error(['not likely to work']);
+    end
     % find unique midpoints (potentially slow, though matlab is good at
     % these)
     if keep_duplicates
       m = m;
+      IA = (1:size(new_M,1))';
       J = (1:size(m,1))';
     else
       [m,IA,J] = unique(m,'rows');
