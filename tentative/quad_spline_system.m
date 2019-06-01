@@ -2,9 +2,19 @@ function [r] = quad_spline_system(V,F)
 %%
 %V = [0,0,0;1,0,0;-0.4,0.8,0;-0.4,-0.8,0];
 %F = [1,2,3;1,4,2];
+if false
+%%
+%V = [0,0,0;1,0,0;0.5,0.6,0;-0.2,-0.76,0;1.2,1.2,0];
+%F = [1,2,3;1,4,2;2,5,3];
+V = [0,0,0;1,0,0;0.5,0.6,0;-0.2,-0.76,0;1.2,1.2,0;2,0,0;1.3,-1,0];
+F = [1,2,3;1,4,2;2,5,3;2,6,5;2,7,6;2,4,7];
+%%
+[V,F] = readOBJ('woody.obj');
+%V = V / max(abs(V));
+%[V,F] = readOBJ('alligator.obj');
 
-V = [0,0,0;1,0,0;0.5,0.6,0;-0.2,-0.76,0;1.2,1.2,0];
-F = [1,2,3;1,4,2;2,5,3];
+%F = F(1:20,:);
+end
 %%
 f = size(F,1);
 
@@ -23,6 +33,8 @@ v2 = V(DE2(:,2),:) - V(DE2(:,1),:);
 v3 = V(DE3(:,2),:) - V(DE3(:,1),:);
 cot12 = -dot(v1,v2,2)./dblA/2; cot23 = -dot(v2,v3,2)./dblA/2; cot31 = -dot(v3,v1,2)./dblA/2;
 Ecot = [cot23,cot31,cot12];
+N = cross(v1,v2);
+assert(min(N(:,3))>0);
 %
 cos12 = -dot(v1,v2,2)./(normrow(v1).*normrow(v2)); 
 cos23 = -dot(v2,v3,2)./(normrow(v2).*normrow(v3)); 
@@ -80,7 +92,7 @@ sI = [t;t;t;...
     iiUE_opposite;iiUE_opposite;iiUE_opposite];
 sJ = [cIndex;pIndex;nIndex;...
     cIndex2;pIndex2;nIndex2];
-sV = [... *no* minus sign for the second triangle. 
+sV = [... *no* minus sign for the second triangle since normal derivatives are opposite at adjacent triangles. 
     -1./diag(EH(iF_DE(cIndex),iiF_DE(cIndex)));...
     diag(Ecos(iF_DE(nIndex),iiF_DE(nIndex)))./diag(EH(iF_DE(pIndex),iiF_DE(pIndex)));...
     diag(Ecos(iF_DE(pIndex),iiF_DE(pIndex)))./diag(EH(iF_DE(nIndex),iiF_DE(nIndex)));...
@@ -104,7 +116,7 @@ sbV = [... *no* minus sign for the second triangle.
 %
 BQ = sparse(sbI,sbJ,sbV,size(bIDE,1),3*f);
 %
-sV = [... *no* minus sign for the second triangle. 
+sV = [... *no* minus sign for the second triangle.
     0.5./diag(EH(iF_DE(cIndex),iiF_DE(cIndex)));...
     -0.5./diag(EH(iF_DE(cIndex),iiF_DE(cIndex)));...
     -0.5./diag(EH(iF_DE(cIndex),iiF_DE(cIndex)));...
@@ -119,9 +131,9 @@ sV = [... minus sign for the second triangle.
     zeros(size(cIndex,1),1);...
     0.5*ones(size(cIndex,1),1);...
     0.5*ones(size(cIndex,1),1);...
-    -zeros(size(cIndex,1),1);...
-    -0.5*ones(size(cIndex,1),1);...
-    -0.5*ones(size(cIndex,1),1);...
+    -zeros(size(cIndex2,1),1);...
+    -0.5*ones(size(cIndex2,1),1);...
+    -0.5*ones(size(cIndex2,1),1);...
     ];
 %
 VL = sparse(sI,sJ,sV,size(iiUE,1),3*f);
@@ -130,9 +142,9 @@ sV = [... minus sign for the second triangle.
     0.25*ones(size(cIndex,1),1);...
     zeros(size(cIndex,1),1);...
     zeros(size(cIndex,1),1);...
-    -0.25*ones(size(cIndex,1),1);...
-    zeros(size(cIndex,1),1);...
-    zeros(size(cIndex,1),1);...
+    -0.25*ones(size(cIndex2,1),1);...
+    zeros(size(cIndex2,1),1);...
+    zeros(size(cIndex2,1),1);...
     ];
 %
 VQ = sparse(sI,sJ,sV,size(iiUE,1),3*f);
@@ -149,3 +161,15 @@ Q = [GQ;VQ;BQ];
 r = struct();
 r.L = L;
 r.Q = Q;
+
+%%
+if false
+%%
+h = max(max(V)-min(V));
+u = V(:,1).*(V(:,1)/h).*3 + V(:,2).*(V(:,2)/h).^3 - V(:,1).*(V(:,1)/h).^5;
+u = V(:,1);
+cl = [u(F(:,1),:),u(F(:,2),:),u(F(:,3),:)];
+cq = Q\([Ge;Ge;Be]-L*cl(:));
+cq = reshape(cq,[size(cq,1)/3,3]);
+norm([Ge;Ge;Be]-L*cl(:)-Q*cq(:))
+end
