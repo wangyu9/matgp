@@ -9,9 +9,9 @@ if false
 V = [0,0,0;1,0,0;0.5,0.6,0;-0.2,-0.76,0;1.2,1.2,0;2,0,0;1.3,-1,0];
 F = [1,2,3;1,4,2;2,5,3;2,6,5;2,7,6;2,4,7];
 %%
-[V,F] = readOBJ('woody.obj');
+%[V,F] = readOBJ('woody.obj');
 %V = V / max(abs(V));
-%[V,F] = readOBJ('alligator.obj');
+[V,F] = readOBJ('alligator.obj');
 
 %F = F(1:20,:);
 end
@@ -56,12 +56,23 @@ iiRE = find(DE(iIDE,1)>DE(iIDE,2));
 DE(iIDE(iiUE),:) % list of undirected edges, containing vertice indices.
 DE(iIDE(iiRE),:) % list of undirected edges, containing vertice indices.
 assert(size(iiUE,1)==size(iiRE,1));
-[CC,~,iiUE_opposite] = intersect(DE(iIDE(iiUE),:),DE(iIDE(iiRE),[2,1]),'rows','stable');
-assert(size(iiUE,1)==size(CC,1));
-% such that DE(iIDE(iiUE),:)== DE(iIDE(iiRE),[2,1])(iiUE_opposite,:) as
-% asserted
-DD = DE(iIDE(iiRE),[2,1]);
-assert(norm(DE(iIDE(iiUE),:)-DD(iiUE_opposite,:))<1e-8);
+
+if false
+    % this is *wrong**
+    [CC,~,iiUE_opposite] = intersect(DE(iIDE(iiUE),:),DE(iIDE(iiRE),[2,1]),'rows','stable');
+    assert(size(iiUE,1)==size(CC,1));
+    % such that DE(iIDE(iiUE),:)== DE(iIDE(iiRE),[2,1])(iiUE_opposite,:) as
+    % asserted
+    DD = DE(iIDE(iiRE),[2,1]);
+    assert(norm(DE(iIDE(iiUE),:)-DD(iiUE_opposite,:))<1e-8);
+else
+    [CC,~,iiUE_opposite] = intersect(DE(iIDE(iiRE),[2,1]),DE(iIDE(iiUE),:),'rows','stable');
+    assert(size(iiUE,1)==size(CC,1));
+    % asserted
+    DD = DE(iIDE(iiUE),:);
+    assert(norm(DD(iiUE_opposite,:)-DE(iIDE(iiRE),[2,1]))<1e-8);
+end 
+    
 %
 iF_DE(iIDE(iiUE));
 iF_DE(iIDE(iiRE));
@@ -86,7 +97,8 @@ nBIndex = mod(cBIndex+f-1,3*f)+1;
 assert(norm(iF_DE(cBIndex)-iF_DE(pBIndex))+norm(iF_DE(cBIndex)-iF_DE(nBIndex))<1e-8)
 assert(norm(iF_DE(cIndex)-iF_DE(pIndex))+norm(iF_DE(cIndex)-iF_DE(nIndex))<1e-8)
 assert(norm(iF_DE(cIndex2)-iF_DE(pIndex2))+norm(iF_DE(cIndex2)-iF_DE(nIndex2))<1e-8)
-
+assert(max(DE(cIndex,1)-DE(cIndex,2))<0)
+assert(min(DE(cIndex2,1)-DE(cIndex2,2))>0)
 %
 sI = [t;t;t;...
     iiUE_opposite;iiUE_opposite;iiUE_opposite];
@@ -167,9 +179,12 @@ if false
 %%
 h = max(max(V)-min(V));
 u = V(:,1).*(V(:,1)/h).*3 + V(:,2).*(V(:,2)/h).^3 - V(:,1).*(V(:,1)/h).^5;
-u = V(:,1);
+%u = V(:,2);
 cl = [u(F(:,1),:),u(F(:,2),:),u(F(:,3),:)];
 cq = Q\([Ge;Ge;Be]-L*cl(:));
 cq = reshape(cq,[size(cq,1)/3,3]);
 norm([Ge;Ge;Be]-L*cl(:)-Q*cq(:))
+%%
+residual = ([Ge;Ge;Be]-L*cl(:));
+norm(residual)
 end
