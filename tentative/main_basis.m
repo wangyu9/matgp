@@ -70,3 +70,32 @@ F = [1,2,3;1,4,2];
 %%
 B = eye(3);
 render_mesh3(V,F);
+%%
+path = 'D://WorkSpace//vmware//shared//ubuntu//WorkSpace//Steklov//steklov//models//shared//';
+%model = 'woody.obj';
+model = 'alligator.obj';
+filename = [path,model];
+[V,F] = readOBJ(filename);
+mat = load([filename,'.hef.mat']);
+[VV,DD] = eig(full(mat.H),'vector');
+VV = VV(:,end:-1:1);
+DD = DD(end:-1:1);
+%%
+VV = real(VV);
+DD = abs(DD);
+%%
+   %%
+   for i = 1:100
+   render_mesh3([V(:,1),VV(:,i)*1,V(:,2)],F,'view',[0 90]);
+   fname = ['./result/',model,'-hes/',num2str(i)]
+   if true
+        savefig([fname,'.fig'])
+        print(fname,'-dpng');
+        %im = imread(fname);
+        %im = imrotate(im,-90);
+        %imwrite(im,fname);
+        image_white2none([fname,'.png'],[fname,'.png']);
+        close();
+
+   end
+   end

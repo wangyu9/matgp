@@ -1,4 +1,4 @@
-function [W]=HarmonicWeights(V,TF,iC,varargin)
+function [W]=QuadraticWeights(A,iC,varargin)
 
 
 % V is all vertices
@@ -8,7 +8,7 @@ function [W]=HarmonicWeights(V,TF,iC,varargin)
 % iC stacks the indices of control vertices in orignal mesh.
 % edge_bilap should be false most of the time, use standard laplacian is enough
 
-assert(max(iC)<=size(V,1));
+assert(max(iC)<=size(A,1));
 assert(size(iC,2)==1||size(iC,1)==1);
 
 iC = iC(:);
@@ -18,7 +18,7 @@ if(~exist('edge_bilap'))
 end
 
 % number of mesh vertices
-n = size(V, 1);
+n = size(A, 1);
 
 % number of contorl handels
 m = size(iC,1);
@@ -45,30 +45,8 @@ end
 
 %%
 
-% note L is negative positive
 
-if(size(TF,2)==4)
-    fprintf('Solving over volume...\n');
-    L = cotmatrix3(V,TF);
-    Mass = massmatrix3(V,TF,'barycentric');
-%     B0 = L*(Mass\L);
-%     B1 = sparse(n,n);
-%     B1(iC,iC) = B0(iC,iC);
-%     B2 = L;%*(Mass\L);
-%     B = B0 + B2;
-    B = -L; 
-else
-    L = cotmatrix(V,TF);
-    Mass = massmatrix(V,TF,'voronoi');
-%     B0 = L*(Mass\L);
-%     B1 = sparse(n,n);
-%     B1(iC,iC) = B0(iC,iC);
-%     B2 = L;%*(Mass\L);
-%     B = B0 + B2;
-    B = -L;
-end
-
-Qi = B;
+Qi = A;
 
 W = zeros(n,size(BC,2));
 

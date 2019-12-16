@@ -9,9 +9,10 @@ if false
 V = [0,0,0;1,0,0;0.5,0.6,0;-0.2,-0.76,0;1.2,1.2,0;2,0,0;1.3,-1,0];
 F = [1,2,3;1,4,2;2,5,3;2,6,5;2,7,6;2,4,7];
 %%
-%[V,F] = readOBJ('woody.obj');
+[V,F] = readOBJ('woody.obj');
+%[V,F] = readOBJ('sphere5.obj');
 %V = V / max(abs(V));
-[V,F] = readOBJ('alligator.obj');
+%[V,F] = readOBJ('alligator.obj');
 
 %F = F(1:20,:);
 end
@@ -34,7 +35,7 @@ v3 = V(DE3(:,2),:) - V(DE3(:,1),:);
 cot12 = -dot(v1,v2,2)./dblA/2; cot23 = -dot(v2,v3,2)./dblA/2; cot31 = -dot(v3,v1,2)./dblA/2;
 Ecot = [cot23,cot31,cot12];
 N = cross(v1,v2);
-assert(min(N(:,3))>0);
+%assert(min(N(:,3))>0);
 %
 cos12 = -dot(v1,v2,2)./(normrow(v1).*normrow(v2)); 
 cos23 = -dot(v2,v3,2)./(normrow(v2).*normrow(v3)); 
@@ -99,6 +100,27 @@ assert(norm(iF_DE(cIndex)-iF_DE(pIndex))+norm(iF_DE(cIndex)-iF_DE(nIndex))<1e-8)
 assert(norm(iF_DE(cIndex2)-iF_DE(pIndex2))+norm(iF_DE(cIndex2)-iF_DE(nIndex2))<1e-8)
 assert(max(DE(cIndex,1)-DE(cIndex,2))<0)
 assert(min(DE(cIndex2,1)-DE(cIndex2,2))>0)
+%
+if true
+%% 
+% one per boundary edge
+% not sure if a minus sign is necessary for sgbV, double check when non-zero Neumann boundary conditions are desired. 
+sgbI = [tb;tb;tb;];
+sgbJ = [cBIndex;pBIndex;nBIndex];
+sgbV = [... 
+    -1./diag(EH(iF_DE(cBIndex),iiF_DE(cBIndex)));...
+    diag(Ecos(iF_DE(nBIndex),iiF_DE(nBIndex)))./diag(EH(iF_DE(pBIndex),iiF_DE(pBIndex)));...
+    diag(Ecos(iF_DE(pBIndex),iiF_DE(pBIndex)))./diag(EH(iF_DE(nBIndex),iiF_DE(nBIndex)));...
+    ];
+GBL = sparse(sgbI,sgbJ,sgbV,size(bIDE,1),3*f);
+%
+sgbV = [... 
+    0.5./diag(EH(iF_DE(cBIndex),iiF_DE(cBIndex)));...
+    -0.5./diag(EH(iF_DE(cBIndex),iiF_DE(cBIndex)));...
+    -0.5./diag(EH(iF_DE(cBIndex),iiF_DE(cBIndex)));...
+    ];
+GBQ = sparse(sgbI,sgbJ,sgbV,size(bIDE,1),3*f);
+end
 %
 sI = [t;t;t;...
     iiUE_opposite;iiUE_opposite;iiUE_opposite];
@@ -169,13 +191,46 @@ Be = zeros(size(bIDE,1),1);% boundary edges: second order boundary condition
 %
 L = [GL;VL;BL];
 Q = [GQ;VQ;BQ];
-%%
+%
 r = struct();
 r.L = L;
 r.Q = Q;
-
+r.GL = GL;
+r.VL = VL;
+r.BL = BL;
+r.GQ = GQ;
+r.VQ = VQ;
+r.BQ = BQ;
+r.GBL = GBL;
+r.GBQ = GBQ;
+%%
+n = size(V,1);
+r.J = sparse((1:3*f)',F(:),ones(3*f,1),3*f,n);
+%
+% u = V(:,1);
+% cl = [u(F(:,1),:),u(F(:,2),:),u(F(:,3),:)];
+% norm(cl(:)-J*u) % this yields zero
+r.seV = [... 
+Ecos(:,1)./(EH(:,2).*EH(:,3));...
+Ecos(:,2)./(EH(:,3).*EH(:,1));...
+Ecos(:,3)./(EH(:,1).*EH(:,2));...
+   ];
+r.H = sparse([1:f,1:f,1:f]',(1:3*f)',r.seV,f,3*f);
+r.dblA = dblA;
 %%
 if false
+% B = inv(r.Q) * r.L * r.J;
+r.B = r.Q \ ( r.L * r.J);
+r.P = r.H * r.B;
+A = (r.P)' * (r.dblA.*(r.P));
+%%
+%[VV,DD] = eigs(A,17,'smallestabs');
+
+%[VV,DD] = eig(full(A),'vector');
+[VV,DD] = eig(full((A+A')/2)+0*eye(n),'vector');
+VV = VV(:,end:-1:1);
+DD = DD(end:-1:1);
+
 %%
 h = max(max(V)-min(V));
 u = V(:,1).*(V(:,1)/h).*3 + V(:,2).*(V(:,2)/h).^3 - V(:,1).*(V(:,1)/h).^5;
@@ -187,4 +242,27 @@ norm([Ge;Ge;Be]-L*cl(:)-Q*cq(:))
 %%
 residual = ([Ge;Ge;Be]-L*cl(:));
 norm(residual)
+end
+if false
+    %%
+    render_mesh3([V(:,1),VV(:,1)*1,V(:,2)],F,'view',[0 90]);
+    %%
+    render_mesh3(V,F,'view',[0 90],'ScaleColor',VV(:,1));
+%%
+embree_render_mesh(V,F,'ScaleColor',VV(:,25),'CollapseTime',60);
+   %%
+   for i = 1:100
+   render_mesh3([V(:,1),VV(:,i)*1,V(:,2)],F,'view',[0 90]);
+   fname = ['./result/woody/',num2str(i)]
+   if true
+        savefig([fname,'.fig'])
+        print(fname,'-dpng');
+        %im = imread(fname);
+        %im = imrotate(im,-90);
+        %imwrite(im,fname);
+        image_white2none([fname,'.png'],[fname,'.png']);
+        close();
+
+   end
+   end
 end

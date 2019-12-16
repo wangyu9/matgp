@@ -288,6 +288,8 @@ function W = biharmonic_bounded(varargin)
             '----------------------------------------------------------\n' ...
             ]);
         end
+        
+        if false % this is removed by wangyu
 
         prob = [];
         [prob.qosubi,prob.qosubj,prob.qoval] = find(tril(Q));
@@ -304,6 +306,8 @@ function W = biharmonic_bounded(varargin)
         fprintf('Quadratic optimization using mosek...\n');
         [r,res]=mosekopt(['minimize' quiet],prob,param);
         % report_mosek_error(r,res);% this is removed by wangyu
+        
+        end
 
       elseif(strcmp(opt_type,'least-squares'))
         % enforce boundary conditions via lower and upper bounds

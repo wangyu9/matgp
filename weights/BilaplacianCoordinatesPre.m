@@ -98,7 +98,7 @@ pre.known = iC;
                 Mass = massmatrix(V,TF,'voronoi');
         end
         % bilaplacian
-        B = L'*Mass*L;
+        B = L'*(Mass\L);% L'*Mass*L;
     end
 
     Qi = B;
