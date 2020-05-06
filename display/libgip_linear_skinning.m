@@ -6,7 +6,7 @@ function [] = libgip_linear_skinning(folder_path,V,W,varargin)
 azel = [];
 Shading = 1.0;
 dim = 3;
-
+l
 nvar = length(varargin);
 
 ii=1;
@@ -41,7 +41,7 @@ prefix = tempprefix();
 % writeMESH(mesh_file_path,V,T,[]);
 % writeDMAT(weights_file_path,C);
 
-path_to_viewer = 'start /b D:\WorkSpace2\PBS\viewer\msvc\x64\Release\pbs.exe';
+path_to_viewer = ' D:\WorkSpace2\PBS\viewer\msvc\x64\Release\pbs.exe'; % start /b 
 
 if ispc
     % https://stackoverflow.com/questions/8055371/how-do-i-run-two-commands-in-one-line-in-windows-cmd
@@ -55,7 +55,7 @@ folder_path = ['D:/WorkSpace/MATLAB/projects/bs/' folder_path];
 
 writeDMAT([folder_path '/WHV.dmat'],lbs_linear_matrix(V,W,dim));
 
-command = ['cd ' folder_path seperator  path_to_viewer ' ' folder_path '//command-matlab.txt'];
+command = ['cd ' folder_path seperator path_to_viewer ' ' folder_path '//command-matlab.txt'];
 
 fprintf('%s\n',command);
 
