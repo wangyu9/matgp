@@ -6,7 +6,7 @@ function [] = libgip_linear_skinning(folder_path,V,W,varargin)
 azel = [];
 Shading = 1.0;
 dim = 3;
-l
+
 nvar = length(varargin);
 
 ii=1;

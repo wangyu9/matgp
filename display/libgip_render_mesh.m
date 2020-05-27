@@ -101,7 +101,8 @@ if isempty(C)
     C = squeeze(ind2rgb(floor(u*size(ccc,1))+1,ccc));
 
 else
-    C = 
+    sprintf('TODO: fix this');
+    % C = 
 end
 
 

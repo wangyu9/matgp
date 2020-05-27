@@ -17,9 +17,10 @@ color_multiplier = 1;
 auto_scale = true;
 hold = true;
 quiver = zeros(0,3);
+upsample = 0;
 % Map of parameter names to variable names
-params_to_variables = containers.Map( { 'VertexColor',  'ScaleColor',   'FileName', 'CollapseTime', 'FastMode', 'SourcePoint',  'Angle',    'DrawIsoline',  'ColorMap', 'DrawPlane',    'ColorMultiplier',  'AutoScale',  'Hold', 'Quiver'},...
-                                       {'C0',           'u0',           'filename', 'collapse_time','fast_mode','source_point', 'angle',    'draw_isoline', 'color_map','draw_plane',   'color_multiplier', 'auto_scale', 'hold', 'quiver'});
+params_to_variables = containers.Map( { 'VertexColor',  'ScaleColor',   'FileName', 'CollapseTime', 'FastMode', 'SourcePoint',  'Angle',    'DrawIsoline',  'ColorMap', 'DrawPlane',    'ColorMultiplier',  'AutoScale',  'Hold', 'Quiver', 'Upsample'},...
+                                       {'C0',           'u0',           'filename', 'collapse_time','fast_mode','source_point', 'angle',    'draw_isoline', 'color_map','draw_plane',   'color_multiplier', 'auto_scale', 'hold', 'quiver', 'upsample'});
 
 %% Shared Parsing Code Segment
 
@@ -46,9 +47,14 @@ if ~isempty(filename)
     end
 end
 %%
+if size(V0,2)==2
+   V0 = [V0, zeros(size(V0,1),1)]; 
+end
+%%
 VV = V0;
 FF = F0;
-while ~fast_mode && size(VV,1)<15000
+iter = 0;
+while ~fast_mode && size(VV,1)<15000 || iter<upsample
     [VV,FF,MM] = upsample_with_faces_index(VV,FF);
     if(~isempty(u0))
         u0 = MM*u0;
@@ -56,6 +62,7 @@ while ~fast_mode && size(VV,1)<15000
     if(~isempty(C0))
         C0 = MM*C0;
     end
+    iter = iter + 1;
 end
 V0 = VV;
 F0 = FF;
