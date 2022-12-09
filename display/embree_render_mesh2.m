@@ -1,4 +1,4 @@
-function [] = embree_render_mesh(V0,F0,varargin)
+function [] = embree_render_mesh2(V0,F0,varargin)
 
 %%
 
@@ -18,9 +18,11 @@ auto_scale = true;
 hold = true;
 quiver = zeros(0,3);
 upsample = 0;
+texture = [];
+UV = [];
 % Map of parameter names to variable names
-params_to_variables = containers.Map( { 'VertexColor',  'ScaleColor',   'FileName', 'CollapseTime', 'FastMode', 'SourcePoint',  'Angle',    'DrawIsoline',  'ColorMap', 'DrawPlane',    'ColorMultiplier',  'AutoScale',  'Hold', 'Quiver', 'Upsample'},...
-                                       {'C0',           'u0',           'filename', 'collapse_time','fast_mode','source_point', 'angle',    'draw_isoline', 'color_map','draw_plane',   'color_multiplier', 'auto_scale', 'hold', 'quiver', 'upsample'});
+params_to_variables = containers.Map( { 'VertexColor',  'ScaleColor',   'FileName', 'CollapseTime', 'FastMode', 'SourcePoint',  'Angle',    'DrawIsoline',  'ColorMap', 'DrawPlane',    'ColorMultiplier',  'AutoScale',  'Hold', 'Quiver', 'Upsample', 'Texture', 'UV'},...
+                                       {'C0',           'u0',           'filename', 'collapse_time','fast_mode','source_point', 'angle',    'draw_isoline', 'color_map','draw_plane',   'color_multiplier', 'auto_scale', 'hold', 'quiver', 'upsample', 'texture', 'UV'});
 
 %% Shared Parsing Code Segment
 
@@ -53,11 +55,15 @@ end
 %%
 VV = V0;
 FF = F0;
+UUVV = UV;
 iter = 0;
 while ~fast_mode && size(VV,1)<15000 || iter<upsample
     [VV,FF,MM] = upsample_with_faces_index(VV,FF);
     if(~isempty(u0))
         u0 = MM*u0;
+    end
+    if(~isempty(UUVV))
+        UUVV = MM * UUVV;
     end
     if(~isempty(C0))
         C0 = MM*C0;
@@ -66,26 +72,7 @@ while ~fast_mode && size(VV,1)<15000 || iter<upsample
 end
 V0 = VV;
 F0 = FF;
-%%
-
-if(auto_scale)%min(u0)<0||max(u0)>1)
-    u0s = (u0-min(u0))/(max(u0)-min(u0));
-else
-    u0s = u0;
-end
-
-if(size(C0,1)==1&&size(C0,2)==3)
-    C0 = repmat(C0,[size(V0,1),1]);
-end
-
-if(isempty(C0)&&~isempty(u0))
-    %C0 = 0.42*uint8(255*value2color(u0s,'ColorMap','default'))+1;
-    %C0 = uint8(0.3*255*value2color(u0,'ColorMap','jet'))+1;
-    C0 = 0.42*uint8(color_multiplier*255*value2color(u0s,'ColorMap',color_map))+1;
-    %C0 = 0.42*uint8(255*value2color(u0s,'ColorMap','heat'))+1;
-end
-
-%axisangle2matrix([0 1 0],-pi/4)
+UV = UUVV;
 %% END of Input Parsing
 %% Preprocessing
 RM = axisangle2matrix([0 1 0],angle);
@@ -109,20 +96,50 @@ if size(quiver,1)>0
    % cannot do this, since the scale will be lost. quiver(:,4:6) = quiver(:,4:6) * s;
 end
 %%
+
+if(auto_scale)%min(u0)<0||max(u0)>1)
+    u0s = (u0-min(u0))/(max(u0)-min(u0));
+else
+    u0s = u0;
+end
+
+if(size(C0,1)==1&&size(C0,2)==3)
+    C0 = repmat(C0,[size(V0,1),1]);
+end
+
+if(isempty(C0)&&~isempty(u0))
+    %C0 = 0.42*uint8(255*value2color(u0s,'ColorMap','default'))+1;
+    %C0 = uint8(0.3*255*value2color(u0,'ColorMap','jet'))+1;
+    C0 = 0.42*uint8(color_multiplier*255*value2color(u0s,'ColorMap',color_map))+1;
+    %C0 = 0.42*uint8(255*value2color(u0s,'ColorMap','heat'))+1;
+end
+
+%axisangle2matrix([0 1 0],-pi/4)
+
 %%
+%%
+if isempty(texture)
     fl = F0';
     fl = fl(:);
     V = V0(fl,:);
     C = C0(fl,:);
     F = reshape(1:3*size(F0,1),[3,size(F0,1)])';
-    %%
+    
+
+    % make a texture image from pervertex color
     n = size(V,1);
     [im,UV,XY] = texture_map(F,C,n);
-    im2 = imresize(im,2,'bilinear');
+    % im2 = imresize(im,2,'bilinear');
+else
+    V = V0;
+    F = F0;
+    im = 0.42*texture;
+    assert(size(UV,1)==size(V,1));
+end
     %%
     ID = num2str(randi([0,10^7]));
     %%
-    imwrite(im,['D:\WorkSpace\temp\tmp',ID,'.ppm']);
+    imwrite(im,[get_temp_path(),ID,'.ppm']);
 %     imwrite(zeros(size(im)),'D:\WorkSpace\temp\zeros.ppm');
 %     imwrite(ones(size(im)),'D:\WorkSpace\temp\ones.ppm');
 %     imwrite(0.5*ones(size(im)),'D:\WorkSpace\temp\half.ppm');
@@ -141,6 +158,12 @@ end
     argu.quiver = quiver;
     argu.ID = ID;
     embree_render_mesh_core(V,F,UV,isoline,argu,hold);
+end
+
+function [p] = get_temp_path()
+
+p = 'C:\workspace\temp\tmp';
+% 'D:\WorkSpace\temp\tmp';
 end
 
 function [im,UV,XY] = texture_map(F,C,n)
@@ -217,7 +240,8 @@ function [] = embree_render_mesh_core(V,F,UV,isoline,argu,hold)
 
 params = [];
 
-prefix = 'D:\WorkSpace\temp\embree'; % specify an temp file prefix.
+prefix = 'C:\workspace\temp\embree';
+% 'D:\WorkSpace\temp\embree'; % specify an temp file prefix.
 
 prefix = [prefix, argu.ID];
 
@@ -236,12 +260,13 @@ argu2 = struct();
 argu2.image_size = [800,800];
 writeECS(ecs_file_path,[name,'.xml'],argu2);
 
-tmp_file_name = ['./screenshot',argu.ID,'.tga'];
+tmp_file_name = [prefix,'-screenshot',argu.ID,'.tga'];
 
 % path_to_viewer = 'C:\WorkSpace\Tools\embree\Embree_v2.15.0_x64\bin\pathtracer.exe';
 % command = [path_to_viewer ' -c ' ecs_file_path ' --verbose 100'];
 
-path_to_viewer = 'D:\WorkSpace\renderer\embree\build\Release\pathtracer';
+path_to_viewer = 'C:\workspace\projects\embree\build3\Release\pathtracer';
+% 'D:\WorkSpace\renderer\embree\build\Release\pathtracer';
 
 %assert(~hold)
 
@@ -273,10 +298,11 @@ if ~isempty(argu.filename)
     mkdir([argu.filename,'.dir']);
     copyfile(ecs_file_path,[argu.filename,'.dir/embree.ecs']);
     copyfile(xml_file_path,[argu.filename,'.dir/embree.xml']);
-    copyfile(['D:\WorkSpace\temp\tmp',argu.ID,'.ppm'],[argu.filename,'.dir/tmp',argu.ID,'.ppm']);
-    delete(tmp_file_name);
-end
+    copyfile([get_temp_path(),argu.ID,'.ppm'],[argu.filename,'.dir/tmp',argu.ID,'.ppm']);
     
+end
+
+delete(tmp_file_name);
 if 0
 delete(mesh_file_path);
 delete(ecs_file_path);

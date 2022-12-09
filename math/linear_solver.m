@@ -2,8 +2,10 @@ function [x] = linear_solver(A,B,method)
 
 switch(method)
     case 'cholmod'
+        %tic
         [x,stats] = cholmod2(A,B);
-        fprintf('SuiteSparse Memory: %f.\n',stats(5));
+        %toc
+        % fprintf('SuiteSparse Memory: %f.\n',stats(5));
     case 'default'
         x = A\B;
     otherwise
