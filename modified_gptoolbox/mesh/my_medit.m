@@ -77,6 +77,8 @@ function [s,r] = my_medit(varargin)
   end
 
   % Change these paths accordingly
+
+  path_to_medit = 'C:\workspace\bbw_demo\medit\'; % wangyu
   MEDIT_PATH = [path_to_medit,'\medit-win.exe'];%wangyu %'/usr/local/igl/libigl/external/medit/medit';
   %MEDIT_PATH = '/opt/local/bin/';
   TEMP_MESH_FILE  = [path_to_medit,'\tmp\temp.mesh'];%'/var/tmp/temp.mesh';

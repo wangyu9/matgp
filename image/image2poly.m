@@ -1,4 +1,6 @@
-function [V,E,H] = image2poly(img,alpha,smooth_iters,max_points)
+function [V,E,H,poly] = image2poly(img,alpha,smooth_iters,max_points)
+
+% 2023: wangyu added poly as output as well. 
 
 % wangyu slightly changed from alec's png2poly
 

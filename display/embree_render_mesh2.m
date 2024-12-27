@@ -1,5 +1,6 @@
-function [] = embree_render_mesh2(V0,F0,varargin)
+function [out] = embree_render_mesh2(V0,F0,varargin)
 
+out = struct();
 %%
 
 % default values
@@ -20,9 +21,10 @@ quiver = zeros(0,3);
 upsample = 0;
 texture = [];
 UV = [];
+isoline = [];
 % Map of parameter names to variable names
-params_to_variables = containers.Map( { 'VertexColor',  'ScaleColor',   'FileName', 'CollapseTime', 'FastMode', 'SourcePoint',  'Angle',    'DrawIsoline',  'ColorMap', 'DrawPlane',    'ColorMultiplier',  'AutoScale',  'Hold', 'Quiver', 'Upsample', 'Texture', 'UV'},...
-                                       {'C0',           'u0',           'filename', 'collapse_time','fast_mode','source_point', 'angle',    'draw_isoline', 'color_map','draw_plane',   'color_multiplier', 'auto_scale', 'hold', 'quiver', 'upsample', 'texture', 'UV'});
+params_to_variables = containers.Map( { 'VertexColor',  'ScaleColor',   'FileName', 'CollapseTime', 'FastMode', 'SourcePoint',  'Angle',    'DrawIsoline',  'ColorMap', 'DrawPlane',    'ColorMultiplier',  'AutoScale',  'Hold', 'Quiver', 'Upsample', 'Isoline', 'Texture', 'UV'},...
+                                       {'C0',           'u0',           'filename', 'collapse_time','fast_mode','source_point', 'angle',    'draw_isoline', 'color_map','draw_plane',   'color_multiplier', 'auto_scale', 'hold', 'quiver', 'upsample', 'isoline', 'texture', 'UV'});
 
 %% Shared Parsing Code Segment
 
@@ -145,18 +147,23 @@ end
 %     imwrite(0.5*ones(size(im)),'D:\WorkSpace\temp\half.ppm');
 
 %%
+if isempty(isoline)
     isoline = struct();
     isoline.V = V0;
     isoline.F = F0;
     isoline.u = u0;
     isoline.draw = draw_isoline;
     isoline.source_point = source_point;
+end
     argu = struct();
     argu.filename = filename;
     argu.collapse_time = collapse_time;
     argu.draw_plane = draw_plane;
     argu.quiver = quiver;
     argu.ID = ID;
+
+    out.isoline = isoline;
+
     embree_render_mesh_core(V,F,UV,isoline,argu,hold);
 end
 

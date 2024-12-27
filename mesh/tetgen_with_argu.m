@@ -58,7 +58,9 @@ function [V,T,F] = tetgen_with_argu(SV,SF,IV,argu)
   end
   
   % call tetgen
-  path_to_tetgen = 'D:\WorkSpace2\MATLAB\bbw_demo\tetgen1.5.0\tetgen'; %wangyu
+%  path_to_tetgen = 'D:\WorkSpace2\MATLAB\bbw_demo\tetgen1.5.0\tetgen'; %wangyu
+path_to_tetgen = 'C:\workspace\bbw_demo\tetgen1.5.0\tetgen'; %wangyu
+
   command = [path_to_tetgen ' ' flags ' ' poly_filename];
   %fprintf(command);
   [status, result] = system(command);

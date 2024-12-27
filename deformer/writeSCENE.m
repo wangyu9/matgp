@@ -29,7 +29,7 @@ function writeSCENE(xmlFileName,V,F,UV,texture,isoline,argu)
              -05	fr  05;...
               05	fr  05];
         Ff = [0 1 2;0 2 3]+1; 
-        % M = material_property('blank');
+        M = material_property('blank');
         M = material_property('grey');
         write_triangle_mesh(docRoot,Vf,Ff,[],M);
     end
