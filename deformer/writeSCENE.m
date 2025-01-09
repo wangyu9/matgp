@@ -296,7 +296,11 @@ end
 
 function write_textured_triangle_mesh(docRoot,V,F,UV,M,texture)
 
+    if isunix
+        F = F-1;
+    else
     F = F - 1;
+    end
 
     scene = docRoot.getDocumentElement;
 

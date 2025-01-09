@@ -22,9 +22,11 @@ upsample = 0;
 texture = [];
 UV = [];
 isoline = [];
+time = [];
+frames = [];
 % Map of parameter names to variable names
-params_to_variables = containers.Map( { 'VertexColor',  'ScaleColor',   'FileName', 'CollapseTime', 'FastMode', 'SourcePoint',  'Angle',    'DrawIsoline',  'ColorMap', 'DrawPlane',    'ColorMultiplier',  'AutoScale',  'Hold', 'Quiver', 'Upsample', 'Isoline', 'Texture', 'UV'},...
-                                       {'C0',           'u0',           'filename', 'collapse_time','fast_mode','source_point', 'angle',    'draw_isoline', 'color_map','draw_plane',   'color_multiplier', 'auto_scale', 'hold', 'quiver', 'upsample', 'isoline', 'texture', 'UV'});
+params_to_variables = containers.Map( { 'VertexColor',  'ScaleColor',   'FileName', 'CollapseTime', 'FastMode', 'SourcePoint',  'Angle',    'DrawIsoline',  'ColorMap', 'DrawPlane',    'ColorMultiplier',  'AutoScale',  'Hold', 'Quiver', 'Upsample', 'Isoline', 'Texture', 'UV', 'Time', 'Frames'},...
+                                       {'C0',           'u0',           'filename', 'collapse_time','fast_mode','source_point', 'angle',    'draw_isoline', 'color_map','draw_plane',   'color_multiplier', 'auto_scale', 'hold', 'quiver', 'upsample', 'isoline', 'texture', 'UV', 'time', 'frames'});
 
 %% Shared Parsing Code Segment
 
@@ -119,6 +121,7 @@ end
 %axisangle2matrix([0 1 0],-pi/4)
 
 %%
+
 %%
 if isempty(texture)
     fl = F0';
@@ -158,6 +161,8 @@ end
     argu = struct();
     argu.filename = filename;
     argu.collapse_time = collapse_time;
+    argu.time = time;
+    argu.frames = frames;
     argu.draw_plane = draw_plane;
     argu.quiver = quiver;
     argu.ID = ID;
@@ -169,8 +174,12 @@ end
 
 function [p] = get_temp_path()
 
-p = 'C:\workspace\temp\tmp';
-% 'D:\WorkSpace\temp\tmp';
+if isunix
+    p = '/local_mount/space/laplace/1/users/yw823/workspace/matlab/temp/tmp'
+else
+    p = 'C:\workspace\temp\tmp';
+    % 'D:\WorkSpace\temp\tmp';
+end
 end
 
 function [im,UV,XY] = texture_map(F,C,n)
@@ -247,8 +256,13 @@ function [] = embree_render_mesh_core(V,F,UV,isoline,argu,hold)
 
 params = [];
 
-prefix = 'C:\workspace\temp\embree';
-% 'D:\WorkSpace\temp\embree'; % specify an temp file prefix.
+if isunix
+    prefix = '/local_mount/space/laplace/1/users/yw823/workspace/matlab/temp/embree';
+else
+
+    prefix = 'C:\workspace\temp\embree';
+    % 'D:\WorkSpace\temp\embree'; % specify an temp file prefix.
+end
 
 prefix = [prefix, argu.ID];
 
@@ -267,13 +281,19 @@ argu2 = struct();
 argu2.image_size = [800,800];
 writeECS(ecs_file_path,[name,'.xml'],argu2);
 
-tmp_file_name = [prefix,'-screenshot',argu.ID,'.tga'];
 
-% path_to_viewer = 'C:\WorkSpace\Tools\embree\Embree_v2.15.0_x64\bin\pathtracer.exe';
-% command = [path_to_viewer ' -c ' ecs_file_path ' --verbose 100'];
 
-path_to_viewer = 'C:\workspace\projects\embree\build3\Release\pathtracer';
-% 'D:\WorkSpace\renderer\embree\build\Release\pathtracer';
+if isunix
+    tmp_file_name = [prefix,'-screenshot',argu.ID,'.tga'];
+    path_to_viewer = '/local_mount/space/laplace/1/users/yw823/workspace/render/embree-4.3.3/build/embree_pathtracer';
+else
+    tmp_file_name = [prefix,'-screenshot',argu.ID,'.tga'];
+    % path_to_viewer = 'C:\WorkSpace\Tools\embree\Embree_v2.15.0_x64\bin\pathtracer.exe';
+    % command = [path_to_viewer ' -c ' ecs_file_path ' --verbose 100'];
+    
+    path_to_viewer = 'C:\workspace\projects\embree\build3\Release\pathtracer';
+    % 'D:\WorkSpace\renderer\embree\build\Release\pathtracer';
+end
 
 %assert(~hold)
 
@@ -288,6 +308,14 @@ if ~isempty(argu.collapse_time)
     command = [command, sprintf(' --collapse_time %f',argu.collapse_time)];
 end
 
+if ~isempty(argu.time)
+    command = [command, sprintf(' --time %f',argu.time)];
+end
+
+if ~isempty(argu.frames)
+    command = [command, sprintf(' --frames %f',argu.frames)];
+end
+
 fprintf('%s\n',command);
 % /min 
 % https://www.mathworks.com/matlabcentral/answers/374614-how-to-run-a-bat-file-in-background-without-opening-command-prompt
@@ -297,10 +325,15 @@ status
 result
 
 if ~isempty(argu.filename)
-    
-    %[im,~] = tga_read_image(tmp_file_name); % this does not work somehow
-    [im,~] = tga_read_image('./screenshot.tga');
+    if false
+        [im,~] = tga_read_image(tmp_file_name); % this does not work somehow
+    else
+        [im,~] = tga_read_image('./screenshot.tga');
+    end
     % im = imread(); % this is not supported.
+    if isunix
+        im = im(end:-1:1,:,:);
+    end
     imwrite(im,argu.filename);
     mkdir([argu.filename,'.dir']);
     copyfile(ecs_file_path,[argu.filename,'.dir/embree.ecs']);
@@ -311,9 +344,9 @@ end
 
 delete(tmp_file_name);
 if 0
-delete(mesh_file_path);
-delete(ecs_file_path);
-delete(mtl_file_path);
+    delete(mesh_file_path);
+    delete(ecs_file_path);
+    delete(mtl_file_path);
 end
 
 end
